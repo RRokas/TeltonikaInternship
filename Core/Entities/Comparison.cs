@@ -1,25 +1,41 @@
-﻿namespace Core.Entities
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Core.Entities
 {
     public class Comparison
     {
-        public ComparisonResult Result { get; set; }
-        public ConfigurationParameter Source { get; set; }
-        public ConfigurationParameter Target { get; set; }
+        public List<ConfigurationParameterComparison> Results { get; set; }
+        public DeviceConfiguration Source { get; set; }
+        public DeviceConfiguration Target { get; set; }
 
-        public Comparison(ConfigurationParameter source, ConfigurationParameter target)
+        public Comparison(DeviceConfiguration source, DeviceConfiguration target)
         {
             Source = source;
             Target = target;
-            Result = Compare();
+            Results = Compare();
         }
         
-        private ComparisonResult Compare()
+        private List<ConfigurationParameterComparison> Compare()
         {
-            if (Source == null && Target == null) return ComparisonResult.Unchanged;
-            if (Source == null) return ComparisonResult.Added;
-            if (Target == null) return ComparisonResult.Removed;
-            if (Source.Value == Target.Value) return ComparisonResult.Unchanged;
-            return ComparisonResult.Modified;
+            var result = new List<ConfigurationParameterComparison>();
+            if(Source == null || Target == null) throw new ArgumentException("Source or Target is null");
+            if (Source.Parameters.Count == 0 && Target.Parameters.Count == 0) return result;
+
+            foreach (var sourceParameter in Source.Parameters)
+            {
+                var targetParameter = Target.Parameters.First(x => x.Id.ToString() == sourceParameter.Id.ToString());
+                result.Add(new ConfigurationParameterComparison(sourceParameter, targetParameter));
+            }
+            
+            foreach (var targetParameter in Target.Parameters)
+            {
+                var sourceParameter = Source.Parameters.Find(x => x.Id.ToString() == targetParameter.Id.ToString());
+                if (sourceParameter == null) result.Add(new ConfigurationParameterComparison(null, targetParameter));
+            }
+            
+            return result;
         }
     }
 
