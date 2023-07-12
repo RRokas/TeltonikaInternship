@@ -25,7 +25,7 @@ namespace Core.Entities
 
             foreach (var sourceParameter in Source.Parameters)
             {
-                var targetParameter = Target.Parameters.First(x => x.Id.ToString() == sourceParameter.Id.ToString());
+                var targetParameter = Target.Parameters.Find(x => x.Id.ToString() == sourceParameter.Id.ToString());
                 result.Add(new ConfigurationParameterComparison(sourceParameter, targetParameter));
             }
             
