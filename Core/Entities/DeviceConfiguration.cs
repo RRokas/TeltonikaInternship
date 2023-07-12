@@ -8,12 +8,10 @@ namespace Core.Entities
 {
     public class DeviceConfiguration
     {
-        public string Filename { get; set; }
         public List<ConfigurationParameter> Parameters { get; set; }
 
         public DeviceConfiguration(FileInfo configFile)
         {
-            Filename = configFile.Name;
             var configString = ReadConfigString(configFile.FullName);
             Parameters = ParseConfigString(configString);
         }
