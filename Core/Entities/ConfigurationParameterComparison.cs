@@ -19,8 +19,8 @@ namespace Core.Entities
         {
             if (Source == null && Target != null) return ComparisonResult.Added;
             if (Source != null && Target == null) return ComparisonResult.Removed;
-            if (Source.Id.ToString() != Target.Id.ToString()) throw new ArgumentException("Source and Target Ids are not equal");
-            if (Source.Value.ToString() == Target.Value.ToString()) return ComparisonResult.Unchanged;
+            if (!Source!.Id.Equals(Target!.Id)) throw new ArgumentException("Source and Target Ids are not equal");
+            if (Source.Value.Equals(Target.Value)) return ComparisonResult.Unchanged;
             return ComparisonResult.Modified;
         }
     }
