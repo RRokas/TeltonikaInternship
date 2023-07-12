@@ -51,5 +51,23 @@ namespace Core.Tests
             Assert.Equal("RemovedParameter", removedParameterResults[0].Source.Id.ToString());
             Assert.Equal("1", removedParameterResults[0].Source.Value.ToString());
         }
+        
+        [Fact]
+        public void DetectModifiedParameters()
+        {
+            var sourceConfigString = "Name:SomeName;Version:1;Multiplier:1.2;ModifiedParameter:1";
+            var targetConfigString = "Name:SomeName;Version:1;Multiplier:1.2;ModifiedParameter:2";
+            var source = new DeviceConfiguration(sourceConfigString);
+            var target = new DeviceConfiguration(targetConfigString);
+            
+            var comparison = new Comparison(source, target);
+            var modifiedParameterResults = comparison.Results
+                .Where(x=>x.Result == ComparisonResult.Modified).ToList();
+            
+            Assert.Single(modifiedParameterResults);
+            Assert.Equal("ModifiedParameter", modifiedParameterResults[0].Source.Id.ToString());
+            Assert.Equal("1", modifiedParameterResults[0].Source.Value.ToString());
+            Assert.Equal("2", modifiedParameterResults[0].Target.Value.ToString());
+        }
     }
 }
