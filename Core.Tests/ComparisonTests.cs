@@ -69,5 +69,32 @@ namespace Core.Tests
             Assert.Equal("1", modifiedParameterResults[0].Source.Value.ToString());
             Assert.Equal("2", modifiedParameterResults[0].Target.Value.ToString());
         }
+        
+        [Fact]
+        public void ThrowArgumentExceptionWhenSourceOrTargetIsNull()
+        {
+            var config = new DeviceConfiguration("Name:SomeName;Version:1;Multiplier:1.2;ModifiedParameter:1");
+            Assert.Throws<System.ArgumentException>(() => new Comparison(null, config));
+            Assert.Throws<System.ArgumentException>(() => new Comparison(config, null));
+        }
+
+        [Fact]
+        public void ThrowArgumentExceptionWhenParameterIdsDontMatch()
+        {
+            var sourceParameter = new ConfigurationParameter("SomeId", "SomeValue");
+            var targetParameter = new ConfigurationParameter("SomeOtherId", "SomeValue");
+            
+            Assert.Throws<System.ArgumentException>(() => 
+                new ConfigurationParameterComparison(sourceParameter, targetParameter)
+            );
+        }
+
+        [Fact]
+        public void ReturnEmptyComparisonListIfNoParametersInConfig()
+        {
+            var config = new DeviceConfiguration("");
+            var comparison = new Comparison(config, config);
+            Assert.Empty(comparison.Results);
+        }
     }
 }
