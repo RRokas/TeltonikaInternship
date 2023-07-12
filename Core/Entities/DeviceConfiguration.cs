@@ -11,13 +11,16 @@ namespace Core.Entities
         public string Filename { get; set; }
         public List<ConfigurationParameter> Parameters { get; set; }
 
-        public DeviceConfiguration(string configPath)
+        public DeviceConfiguration(FileInfo configFile)
         {
-            Filename = Path.GetFileName(configPath);
-            var configString = ReadConfigString(configPath);
+            Filename = configFile.Name;
+            var configString = ReadConfigString(configFile.FullName);
             Parameters = ParseConfigString(configString);
-            var doubleParams = Parameters.Where(x => x.Value.GetType().ToString() == "System.Double");
-            Console.WriteLine(Parameters[0].Value.GetType().ToString());
+        }
+
+        public DeviceConfiguration(string configString)
+        {
+            Parameters = ParseConfigString(configString);
         }
 
         private string ReadConfigString(string filePath)

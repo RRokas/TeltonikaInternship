@@ -10,7 +10,8 @@ namespace Core.Tests
         [Fact]
         public void ReadValidConfig()
         {
-            var config = new DeviceConfiguration("../../../../Core.Tests/test_data/FMB001-default.cfg");
+            var configFile = new FileInfo("../../../../Core.Tests/test_data/FMB001-default.cfg");
+            var config = new DeviceConfiguration(configFile);
             
             Assert.NotNull(config.Parameters);
         }
@@ -18,7 +19,8 @@ namespace Core.Tests
         [Fact]
         public void CorrectParameterTypesParsed()
         {
-            var config = new DeviceConfiguration("../../../../Core.Tests/test_data/FMB001-default.cfg");
+            var configFile = new FileInfo("../../../../Core.Tests/test_data/FMB001-default.cfg");
+            var config = new DeviceConfiguration(configFile);
             Assert.IsType<string>(config.Parameters[0].Id);
             Assert.IsType<string>(config.Parameters[0].Value);
             Assert.IsType<string>(config.Parameters[1].Id);
