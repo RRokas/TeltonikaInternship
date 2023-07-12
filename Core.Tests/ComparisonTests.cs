@@ -22,7 +22,7 @@ namespace Core.Tests
         public void DetectAddedParameters()
         {
             var sourceConfigString = "Name:SomeName;Version:1;Multiplier:1.2";
-            var targetConfigString = "Name:SomeName;Version:1;Multiplier:1.2;AddedParameter:1";
+            var targetConfigString = "Name:SomeName;Version:1;Multiplier:1.2;0:1";
             var source = new DeviceConfiguration(sourceConfigString);
             var target = new DeviceConfiguration(targetConfigString);
             
@@ -31,14 +31,14 @@ namespace Core.Tests
                 .Where(x=>x.Result == ComparisonResult.Added).ToList();
             
             Assert.Single(addedParameterResults);
-            Assert.Equal("AddedParameter", addedParameterResults[0].Target.Id.ToString());
+            Assert.Equal("0", addedParameterResults[0].Target.Id.ToString());
             Assert.Equal("1", addedParameterResults[0].Target.Value.ToString());
         }
         
         [Fact]
         public void DetectRemovedParameters()
         {
-            var sourceConfigString = "Name:SomeName;Version:1;Multiplier:1.2;RemovedParameter:1";
+            var sourceConfigString = "Name:SomeName;Version:1;Multiplier:1.2;0:1";
             var targetConfigString = "Name:SomeName;Version:1;Multiplier:1.2";
             var source = new DeviceConfiguration(sourceConfigString);
             var target = new DeviceConfiguration(targetConfigString);
@@ -48,15 +48,15 @@ namespace Core.Tests
                 .Where(x=>x.Result == ComparisonResult.Removed).ToList();
             
             Assert.Single(removedParameterResults);
-            Assert.Equal("RemovedParameter", removedParameterResults[0].Source.Id.ToString());
+            Assert.Equal(0, removedParameterResults[0].Source.Id);
             Assert.Equal("1", removedParameterResults[0].Source.Value.ToString());
         }
         
         [Fact]
         public void DetectModifiedParameters()
         {
-            var sourceConfigString = "Name:SomeName;Version:1;Multiplier:1.2;ModifiedParameter:1";
-            var targetConfigString = "Name:SomeName;Version:1;Multiplier:1.2;ModifiedParameter:2";
+            var sourceConfigString = "Name:SomeName;Version:1;Multiplier:1.2;0:1";
+            var targetConfigString = "Name:SomeName;Version:1;Multiplier:1.2;0:2";
             var source = new DeviceConfiguration(sourceConfigString);
             var target = new DeviceConfiguration(targetConfigString);
             
@@ -65,7 +65,7 @@ namespace Core.Tests
                 .Where(x=>x.Result == ComparisonResult.Modified).ToList();
             
             Assert.Single(modifiedParameterResults);
-            Assert.Equal("ModifiedParameter", modifiedParameterResults[0].Source.Id.ToString());
+            Assert.Equal("0", modifiedParameterResults[0].Source.Id.ToString());
             Assert.Equal("1", modifiedParameterResults[0].Source.Value.ToString());
             Assert.Equal("2", modifiedParameterResults[0].Target.Value.ToString());
         }
@@ -73,8 +73,8 @@ namespace Core.Tests
         [Fact]
         public void DetectModifiedTypes()
         {
-            var sourceConfigString = "Name:SomeName;Version:1;Multiplier:1.2;ModifiedParameter:1";
-            var targetConfigString = "Name:SomeName;Version:1;Multiplier:1.2;ModifiedParameter:vienas";
+            var sourceConfigString = "Name:SomeName;Version:1;Multiplier:1.2;0:1";
+            var targetConfigString = "Name:SomeName;Version:1;Multiplier:1.2;0:vienas";
             var source = new DeviceConfiguration(sourceConfigString);
             var target = new DeviceConfiguration(targetConfigString);
             
@@ -83,7 +83,7 @@ namespace Core.Tests
                 .Where(x=>x.Result == ComparisonResult.Modified).ToList();
             
             Assert.Single(modifiedParameterResults);
-            Assert.Equal("ModifiedParameter", modifiedParameterResults[0].Source.Id);
+            Assert.Equal(0, modifiedParameterResults[0].Source.Id);
             Assert.Equal(1, modifiedParameterResults[0].Source.Value);
             Assert.Equal("vienas", modifiedParameterResults[0].Target.Value);
         }

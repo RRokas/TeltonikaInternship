@@ -7,11 +7,13 @@ namespace Core.Entities
     {
         public object Id { get; set; }
         public object Value { get; set; }
+        public bool IsMetadata { get; set; }
 
         public ConfigurationParameter(string id, string value)
         {
             Id = ParseType(id);
             Value = ParseType(value);
+            IsMetadata = Id is string;
         }
         
         private static object ParseType(string value)

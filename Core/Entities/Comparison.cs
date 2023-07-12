@@ -22,16 +22,19 @@ namespace Core.Entities
             var result = new List<ConfigurationParameterComparison>();
             if(Source == null || Target == null) throw new ArgumentException("Source or Target is null");
             if (Source.Parameters.Count == 0 && Target.Parameters.Count == 0) return result;
+            
+            var sourceParametersForComparison = Source.Parameters.Where(x => !x.IsMetadata).ToList();
+            var targetParametersForComparison = Target.Parameters.Where(x => !x.IsMetadata).ToList();
 
-            foreach (var sourceParameter in Source.Parameters)
+            foreach (var sourceParameter in sourceParametersForComparison)
             {
-                var targetParameter = Target.Parameters.Find(x => x.Id.ToString() == sourceParameter.Id.ToString());
+                var targetParameter = targetParametersForComparison.Find(x => x.Id.ToString() == sourceParameter.Id.ToString());
                 result.Add(new ConfigurationParameterComparison(sourceParameter, targetParameter));
             }
             
-            foreach (var targetParameter in Target.Parameters)
+            foreach (var targetParameter in targetParametersForComparison)
             {
-                var sourceParameter = Source.Parameters.Find(x => x.Id.ToString() == targetParameter.Id.ToString());
+                var sourceParameter = sourceParametersForComparison.Find(x => x.Id.ToString() == targetParameter.Id.ToString());
                 if (sourceParameter == null) result.Add(new ConfigurationParameterComparison(null, targetParameter));
             }
             
