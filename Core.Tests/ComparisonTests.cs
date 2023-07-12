@@ -71,6 +71,24 @@ namespace Core.Tests
         }
         
         [Fact]
+        public void DetectModifiedTypes()
+        {
+            var sourceConfigString = "Name:SomeName;Version:1;Multiplier:1.2;ModifiedParameter:1";
+            var targetConfigString = "Name:SomeName;Version:1;Multiplier:1.2;ModifiedParameter:vienas";
+            var source = new DeviceConfiguration(sourceConfigString);
+            var target = new DeviceConfiguration(targetConfigString);
+            
+            var comparison = new Comparison(source, target);
+            var modifiedParameterResults = comparison.Results
+                .Where(x=>x.Result == ComparisonResult.Modified).ToList();
+            
+            Assert.Single(modifiedParameterResults);
+            Assert.Equal("ModifiedParameter", modifiedParameterResults[0].Source.Id);
+            Assert.Equal(1, modifiedParameterResults[0].Source.Value);
+            Assert.Equal("vienas", modifiedParameterResults[0].Target.Value);
+        }
+        
+        [Fact]
         public void ThrowArgumentExceptionWhenSourceOrTargetIsNull()
         {
             var config = new DeviceConfiguration("Name:SomeName;Version:1;Multiplier:1.2;ModifiedParameter:1");
