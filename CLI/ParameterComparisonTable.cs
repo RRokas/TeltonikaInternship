@@ -28,7 +28,7 @@ namespace CLI
 
         public Table BuildTable()
         {
-            var table = new Table();
+            var table = new Table().Title("Parameter comparison");
             table.AddColumn("Parameter");
             table.AddColumn("Source value");
             table.AddColumn("Target value");
