@@ -71,6 +71,21 @@ namespace CLI
             return (sourceTable, targetTable);
         }
 
+        public Table BuildComparisonSummary()
+        {
+            var table = new Table().Title("Comparison summary");
+            table.AddColumn(new TableColumn("Unchanged").Centered());
+            table.AddColumn(new TableColumn("[yellow]Modified[/]").Centered());
+            table.AddColumn(new TableColumn("[green]Added[/]").Centered());
+            table.AddColumn(new TableColumn("[red]Removed[/]").Centered());
+            table.AddRow(
+                Comparison.Results.Count(x=>x.Result==ComparisonResult.Unchanged).ToString(),
+                Comparison.Results.Count(x=>x.Result==ComparisonResult.Modified).ToString(),
+                Comparison.Results.Count(x=>x.Result==ComparisonResult.Added).ToString(),
+                Comparison.Results.Count(x=>x.Result==ComparisonResult.Removed).ToString()).Centered();
+            return table;
+        }
+
         private ParameterComparisonRow CreateTableRow(ConfigurationParameterComparison comparisonResult)
         {
             var parameterName = comparisonResult.Source?.Id.ToString() ?? comparisonResult.Target?.Id.ToString();
