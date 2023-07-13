@@ -18,9 +18,14 @@ namespace CLI
         
         public void ApplyParameterNameFilter(string subStringToSearchFor)
         {
-            FilteredRows = Comparison.Results.Where(x=>
-                    x.Source.Id.ToString().Contains(subStringToSearchFor) || x.Target.Id.ToString().Contains(subStringToSearchFor))
+            FilteredRows = Comparison.Results.Where(x=> 
+                    GetParameterName(x).StartsWith(subStringToSearchFor))
                 .Select(CreateTableRow).ToList();
+        }
+
+        private string GetParameterName(ConfigurationParameterComparison parameterComparison)
+        {
+            return parameterComparison.Source?.Id.ToString() ?? parameterComparison.Target?.Id.ToString() ?? string.Empty;
         }
         
         public void ApplyResultFilter(ComparisonResult result)
