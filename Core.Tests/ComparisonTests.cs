@@ -48,7 +48,7 @@ namespace Core.Tests
                 .Where(x=>x.Result == ComparisonResult.Removed).ToList();
             
             Assert.Single(removedParameterResults);
-            Assert.Equal(0, removedParameterResults[0].Source.Id);
+            Assert.Equal("0", removedParameterResults[0].Source.Id);
             Assert.Equal("1", removedParameterResults[0].Source.Value.ToString());
         }
         
@@ -83,8 +83,8 @@ namespace Core.Tests
                 .Where(x=>x.Result == ComparisonResult.Modified).ToList();
             
             Assert.Single(modifiedParameterResults);
-            Assert.Equal(0, modifiedParameterResults[0].Source.Id);
-            Assert.Equal(1, modifiedParameterResults[0].Source.Value);
+            Assert.Equal("0", modifiedParameterResults[0].Source.Id);
+            Assert.Equal("1", modifiedParameterResults[0].Source.Value);
             Assert.Equal("vienas", modifiedParameterResults[0].Target.Value);
         }
         

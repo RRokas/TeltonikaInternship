@@ -58,14 +58,14 @@ namespace CLI
             targetTable.AddColumn("Parameter");
             targetTable.AddColumn("Value");
 
-            foreach (var parameter in Comparison.Source.Parameters.Where(x => x.IsMetadata))
+            foreach (var metadata in Comparison.Source.Metadata)
             {
-                sourceTable.AddRow(parameter.Id.ToString() ?? string.Empty, parameter.Value.ToString() ?? string.Empty);
+                sourceTable.AddRow(metadata.Id, metadata.Value);
             }
 
-            foreach (var parameter in Comparison.Target.Parameters.Where(x => x.IsMetadata))
+            foreach (var metadata in Comparison.Target.Metadata)
             {
-                targetTable.AddRow(parameter.Id.ToString() ?? string.Empty, parameter.Value.ToString() ?? string.Empty);
+                targetTable.AddRow(metadata.Id, metadata.Value);
             }
             
             return (sourceTable, targetTable);
