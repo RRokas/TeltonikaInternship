@@ -19,25 +19,24 @@ namespace CLI
             var tableBuilder = new TableBuilder(comparison);
             
             var choice = AskComparisonType();
-            if (choice == MenuChoice.FilterById)
+            switch (choice)
             {
-                var filterString = AnsiConsole.Ask<string>("Enter substring to search for");
-                tableBuilder.ApplyParameterNameFilter(filterString);
-            } else if(choice == MenuChoice.FilterByResult)
-            {
-                var filterString = AnsiConsole.Prompt(
-                    new SelectionPrompt<ComparisonResult>()
-                        .Title("Select result to filter by")
-                        .AddChoices(new[] {
-                            ComparisonResult.Unchanged,
-                            ComparisonResult.Modified,
-                            ComparisonResult.Added,
-                            ComparisonResult.Removed
-                        }));
-                tableBuilder.ApplyResultFilter(filterString);
+                case MenuChoice.FilterById:
+                {
+                    var filterString = AnsiConsole.Ask<string>("Enter substring to search for");
+                    tableBuilder.ApplyParameterNameFilter(filterString);
+                    break;
+                }
+                case MenuChoice.FilterByResult:
+                {
+                    var filter = AskComparisonResultFilter();
+                    tableBuilder.ApplyResultFilter(filter);
+                    break;
+                }
             }
             
             var comparisonTable = tableBuilder.BuildComparisonTable();
+            var summaryTable = tableBuilder.BuildComparisonSummary();
             var metadataTables = tableBuilder.BuildMetadataTables();
            
             var rootGrid = new Grid().AddColumn();
@@ -60,7 +59,19 @@ namespace CLI
                         MenuChoice.FilterById,
                         MenuChoice.FilterByResult
                     }));
-            
+        }
+        
+        static ComparisonResult AskComparisonResultFilter()
+        {
+            return AnsiConsole.Prompt(
+                new SelectionPrompt<ComparisonResult>()
+                    .Title("Select result to filter by")
+                    .AddChoices(new[] {
+                        ComparisonResult.Unchanged,
+                        ComparisonResult.Modified,
+                        ComparisonResult.Added,
+                        ComparisonResult.Removed
+                    }));
         }
         
         private enum MenuChoice
