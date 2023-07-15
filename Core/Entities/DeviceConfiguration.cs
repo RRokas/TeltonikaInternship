@@ -27,9 +27,13 @@ namespace Core.Entities
 
         public DeviceConfiguration LoadFromString(string configString)
         {
-            var parameters = new List<ConfigurationParameter>();
-            var metadata = new List<ConfigurationMetadata>();
             var idValuePairs = configString.Split(';');
+
+            if (idValuePairs.Length == 0)
+                return new DeviceConfiguration();
+
+            var parameters = new List<ConfigurationParameter>();
+            var metadata = new List<ConfigurationMetadata>();  
             foreach (var idValuePair in idValuePairs)
             {
                 if (string.IsNullOrEmpty(idValuePair)) continue;
