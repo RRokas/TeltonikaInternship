@@ -92,8 +92,8 @@ namespace Core.Tests
         public void ThrowArgumentExceptionWhenSourceOrTargetIsNull()
         {
             var config = new DeviceConfiguration().LoadFromString("Name:SomeName;Version:1;Multiplier:1.2;ModifiedParameter:1");
-            Assert.Throws<System.ArgumentException>(() => new Comparison(null, config));
-            Assert.Throws<System.ArgumentException>(() => new Comparison(config, null));
+            Assert.Throws<System.ArgumentNullException>(() => new Comparison(null, config));
+            Assert.Throws<System.ArgumentNullException>(() => new Comparison(config, null));
         }
 
         [Fact]

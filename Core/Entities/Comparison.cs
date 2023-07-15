@@ -19,10 +19,13 @@ namespace Core.Entities
         
         private List<ConfigurationParameterComparison> Compare()
         {
-            var result = new List<ConfigurationParameterComparison>();
-            if(Source == null || Target == null) throw new ArgumentException("Source or Target is null");
-            if (Source.Parameters.Count == 0 && Target.Parameters.Count == 0) return result;
+            _ = Source ?? throw new ArgumentNullException(nameof(Source));
+            _ = Target ?? throw new ArgumentNullException(nameof(Target));
 
+            if (Source.Parameters.Count == 0 && Target.Parameters.Count == 0) 
+                return new List<ConfigurationParameterComparison>();
+
+            var result = new List<ConfigurationParameterComparison>();
             foreach (var sourceParameter in Source.Parameters)
             {
                 var targetParameter = Target.Parameters.Find(x => x.Id == sourceParameter.Id);
