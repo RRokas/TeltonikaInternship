@@ -1,28 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 
 namespace Core.Entities
 {
     public class DeviceConfiguration
     {
-        public List<ConfigurationMetadata> Metadata { get; set; }
-        public List<ConfigurationParameter> Parameters { get; set; }
-
-        public DeviceConfiguration(FileInfo configFile)
-        {
-            var configString = ReadConfigString(configFile.FullName);
-            var parsedConfig = ParseConfigString(configString);
-            Parameters = parsedConfig.ConfigurationParameters;
-            Metadata = parsedConfig.ConfigurationMetadata;
-        }
-
-        public DeviceConfiguration(string configString)
-        {
-            var parsedConfig = ParseConfigString(configString);
-            Parameters = parsedConfig.ConfigurationParameters;
-            Metadata = parsedConfig.ConfigurationMetadata;
-        }
+        public List<ConfigurationMetadata> Metadata { get; private set; } = new();
+        public List<ConfigurationParameter> Parameters { get; private set; } = new();
 
         private string ReadConfigString(string filePath)
         {
@@ -31,9 +18,14 @@ namespace Core.Entities
             using var streamReader = new StreamReader(gzip);
             return streamReader.ReadToEnd();
         }
+        
+        public DeviceConfiguration LoadFromFile(FileInfo configFile)
+        {
+            var configString = ReadConfigString(configFile.FullName);
+            return LoadFromString(configString);
+        }
 
-        private (List<ConfigurationParameter> ConfigurationParameters, List<ConfigurationMetadata> ConfigurationMetadata
-            ) ParseConfigString(string configString)
+        public DeviceConfiguration LoadFromString(string configString)
         {
             var parameters = new List<ConfigurationParameter>();
             var metadata = new List<ConfigurationMetadata>();
@@ -49,7 +41,11 @@ namespace Core.Entities
                     parameters.Add(new ConfigurationParameter(splitPair[0], splitPair[1]));
             }
 
-            return (parameters, metadata);
+            return new DeviceConfiguration
+            {
+                Metadata = metadata,
+                Parameters = parameters
+            };
         }
     }
 }

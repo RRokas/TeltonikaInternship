@@ -11,8 +11,8 @@ namespace CLI
             var sourceConfigFile = new FileInfo(args[0]);
             var targetConfigFile = new FileInfo(args[1]);
             
-            var source = new DeviceConfiguration(sourceConfigFile);
-            var target = new DeviceConfiguration(targetConfigFile);
+            var source = new DeviceConfiguration().LoadFromFile(sourceConfigFile);
+            var target = new DeviceConfiguration().LoadFromFile(targetConfigFile);
             
             var comparison = new Comparison(source, target);
             

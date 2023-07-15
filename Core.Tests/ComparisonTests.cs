@@ -11,8 +11,8 @@ namespace Core.Tests
         public void CompareIdenticalConfigs()
         {
             var configFile = new FileInfo("../../../../Core.Tests/test_data/FMB920-default.cfg");
-            var source = new DeviceConfiguration(configFile);
-            var target = new DeviceConfiguration(configFile);
+            var source = new DeviceConfiguration().LoadFromFile(configFile);
+            var target = new DeviceConfiguration().LoadFromFile(configFile);
             var comparison = new Comparison(source, target);
             var results = comparison.Results.Select(x=>x.Result).ToList();
             Assert.All(results, x => Assert.Equal(ComparisonResult.Unchanged, x));
@@ -23,8 +23,8 @@ namespace Core.Tests
         {
             var sourceConfigString = "Name:SomeName;Version:1;Multiplier:1.2";
             var targetConfigString = "Name:SomeName;Version:1;Multiplier:1.2;0:1";
-            var source = new DeviceConfiguration(sourceConfigString);
-            var target = new DeviceConfiguration(targetConfigString);
+            var source = new DeviceConfiguration().LoadFromString(sourceConfigString);
+            var target = new DeviceConfiguration().LoadFromString(targetConfigString);
             
             var comparison = new Comparison(source, target);
             var addedParameterResults = comparison.Results
@@ -40,8 +40,8 @@ namespace Core.Tests
         {
             var sourceConfigString = "Name:SomeName;Version:1;Multiplier:1.2;0:1";
             var targetConfigString = "Name:SomeName;Version:1;Multiplier:1.2";
-            var source = new DeviceConfiguration(sourceConfigString);
-            var target = new DeviceConfiguration(targetConfigString);
+            var source = new DeviceConfiguration().LoadFromString(sourceConfigString);
+            var target = new DeviceConfiguration().LoadFromString(targetConfigString);
             
             var comparison = new Comparison(source, target);
             var removedParameterResults = comparison.Results
@@ -57,8 +57,8 @@ namespace Core.Tests
         {
             var sourceConfigString = "Name:SomeName;Version:1;Multiplier:1.2;0:1";
             var targetConfigString = "Name:SomeName;Version:1;Multiplier:1.2;0:2";
-            var source = new DeviceConfiguration(sourceConfigString);
-            var target = new DeviceConfiguration(targetConfigString);
+            var source = new DeviceConfiguration().LoadFromString(sourceConfigString);
+            var target = new DeviceConfiguration().LoadFromString(targetConfigString);
             
             var comparison = new Comparison(source, target);
             var modifiedParameterResults = comparison.Results
@@ -75,8 +75,8 @@ namespace Core.Tests
         {
             var sourceConfigString = "Name:SomeName;Version:1;Multiplier:1.2;0:1";
             var targetConfigString = "Name:SomeName;Version:1;Multiplier:1.2;0:vienas";
-            var source = new DeviceConfiguration(sourceConfigString);
-            var target = new DeviceConfiguration(targetConfigString);
+            var source = new DeviceConfiguration().LoadFromString(sourceConfigString);
+            var target = new DeviceConfiguration().LoadFromString(targetConfigString);
             
             var comparison = new Comparison(source, target);
             var modifiedParameterResults = comparison.Results
@@ -91,7 +91,7 @@ namespace Core.Tests
         [Fact]
         public void ThrowArgumentExceptionWhenSourceOrTargetIsNull()
         {
-            var config = new DeviceConfiguration("Name:SomeName;Version:1;Multiplier:1.2;ModifiedParameter:1");
+            var config = new DeviceConfiguration().LoadFromString("Name:SomeName;Version:1;Multiplier:1.2;ModifiedParameter:1");
             Assert.Throws<System.ArgumentException>(() => new Comparison(null, config));
             Assert.Throws<System.ArgumentException>(() => new Comparison(config, null));
         }
@@ -110,7 +110,7 @@ namespace Core.Tests
         [Fact]
         public void ReturnEmptyComparisonListIfNoParametersInConfig()
         {
-            var config = new DeviceConfiguration("");
+            var config = new DeviceConfiguration().LoadFromString("");
             var comparison = new Comparison(config, config);
             Assert.Empty(comparison.Results);
         }
