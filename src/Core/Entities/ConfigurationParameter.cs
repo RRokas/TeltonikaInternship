@@ -5,8 +5,8 @@ namespace Core.Entities
 {
     public class ConfigurationParameter
     {
-        public string Id { get; set; }
-        public string Value { get; set; }
+        public string Id { get; }
+        public string Value { get; }
 
         public ConfigurationParameter(string id, string value)
         {

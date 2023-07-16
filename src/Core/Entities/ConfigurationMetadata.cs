@@ -2,8 +2,8 @@ namespace Core.Entities
 {
     public class ConfigurationMetadata
     {
-        public string Id { get; init; }
-        public string Value { get; init; }
+        public string Id { get; }
+        public string Value { get; }
 
         public ConfigurationMetadata(string id, string value)
         {

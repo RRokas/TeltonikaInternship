@@ -6,9 +6,9 @@ namespace Core.Entities
 {
     public class Comparison
     {
-        public List<ConfigurationParameterComparison> Results { get; set; }
-        public DeviceConfiguration Source { get; set; }
-        public DeviceConfiguration Target { get; set; }
+        public List<ConfigurationParameterComparison> Results { get; }
+        public DeviceConfiguration Source { get; init; }
+        public DeviceConfiguration Target { get; init; }
 
         public Comparison(DeviceConfiguration source, DeviceConfiguration target)
         {
