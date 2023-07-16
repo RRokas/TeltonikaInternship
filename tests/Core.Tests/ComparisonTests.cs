@@ -1,7 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using Core.Entities;
+using Core.Tests.Utilities;
 using Xunit;
 
 namespace Core.Tests
@@ -11,7 +10,7 @@ namespace Core.Tests
         [Fact]
         public void CompareIdenticalConfigs()
         {
-            var configFile = new FileInfo("../../../../Core.Tests/test_data/FMB920-default.cfg");
+            var configFile = TestDataDirectory.GetFile("FMB920-default.cfg");
             var source = new DeviceConfiguration().LoadFromFile(configFile);
             var target = new DeviceConfiguration().LoadFromFile(configFile);
             var comparison = new Comparison(source, target);
