@@ -1,0 +1,24 @@
+using AutoMapper;
+using Core.DTOs;
+using Core.Entities;
+
+namespace Core
+{
+    public class DtoMapProfile : Profile
+    {
+        public DtoMapProfile()
+        {
+            CreateMap<ConfigurationParameterComparison, ConfigurationParameterComparisonDto>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(MapIdValueFromSourceOrTarget))
+                .ForMember(dto => dto.SourceValue, opt => opt.MapFrom(src => src.Source.Value))
+                .ForMember(dto => dto.TargetValue, opt => opt.MapFrom(src => src.Target.Value))
+                .ForMember(dto => dto.Result, opt => opt.MapFrom(src => src.Result.ToString()));
+        }
+
+        private string MapIdValueFromSourceOrTarget(ConfigurationParameterComparison entity,
+            ConfigurationParameterComparisonDto dto)
+        {
+            return entity.Source != null ? entity.Source.Id : entity.Target.Id;
+        }
+    }
+}
