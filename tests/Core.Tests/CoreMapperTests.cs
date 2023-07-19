@@ -81,7 +81,7 @@ namespace Core.Tests
         }
 
         [Fact]
-        public void MapDeviceConfigurationComparisonToDto_SourceMetadataAccessible()
+        public void MapDeviceConfigurationComparisonToDto_sourceMetadataAccessible()
         {
             var sourceConfigString = "Name:SomeName;Version:1;5:1.2";
             var targetConfigString = "Name:AnotherName;Version:2;6:1.2;0:1";
