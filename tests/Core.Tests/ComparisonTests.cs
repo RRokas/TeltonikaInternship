@@ -13,7 +13,7 @@ namespace Core.Tests
             var configFile = TestDataDirectory.GetFile("FMB920-default.cfg");
             var source = new DeviceConfiguration().LoadFromFile(configFile);
             var target = new DeviceConfiguration().LoadFromFile(configFile);
-            var comparison = new ConfigurationComparison(source, target);
+            var comparison = new DeviceConfigurationComparison(source, target);
             var results = comparison.Results.Select(x=>x.Result).ToList();
             Assert.All(results, x => Assert.Equal(ComparisonResult.Unchanged, x));
         }
@@ -26,7 +26,7 @@ namespace Core.Tests
             var source = new DeviceConfiguration().LoadFromString(sourceConfigString);
             var target = new DeviceConfiguration().LoadFromString(targetConfigString);
             
-            var comparison = new ConfigurationComparison(source, target);
+            var comparison = new DeviceConfigurationComparison(source, target);
             var addedParameterResults = comparison.Results
                 .Where(x=>x.Result == ComparisonResult.Added).ToList();
             
@@ -43,7 +43,7 @@ namespace Core.Tests
             var source = new DeviceConfiguration().LoadFromString(sourceConfigString);
             var target = new DeviceConfiguration().LoadFromString(targetConfigString);
             
-            var comparison = new ConfigurationComparison(source, target);
+            var comparison = new DeviceConfigurationComparison(source, target);
             var removedParameterResults = comparison.Results
                 .Where(x=>x.Result == ComparisonResult.Removed).ToList();
             
@@ -60,7 +60,7 @@ namespace Core.Tests
             var source = new DeviceConfiguration().LoadFromString(sourceConfigString);
             var target = new DeviceConfiguration().LoadFromString(targetConfigString);
             
-            var comparison = new ConfigurationComparison(source, target);
+            var comparison = new DeviceConfigurationComparison(source, target);
             var modifiedParameterResults = comparison.Results
                 .Where(x=>x.Result == ComparisonResult.Modified).ToList();
             
@@ -78,7 +78,7 @@ namespace Core.Tests
             var source = new DeviceConfiguration().LoadFromString(sourceConfigString);
             var target = new DeviceConfiguration().LoadFromString(targetConfigString);
             
-            var comparison = new ConfigurationComparison(source, target);
+            var comparison = new DeviceConfigurationComparison(source, target);
             var modifiedParameterResults = comparison.Results
                 .Where(x=>x.Result == ComparisonResult.Modified).ToList();
             
@@ -92,8 +92,8 @@ namespace Core.Tests
         public void ThrowArgumentExceptionWhenSourceOrTargetIsNull()
         {
             var config = new DeviceConfiguration().LoadFromString("Name:SomeName;Version:1;Multiplier:1.2;ModifiedParameter:1");
-            Assert.Throws<System.ArgumentNullException>(() => new ConfigurationComparison(null, config));
-            Assert.Throws<System.ArgumentNullException>(() => new ConfigurationComparison(config, null));
+            Assert.Throws<System.ArgumentNullException>(() => new DeviceConfigurationComparison(null, config));
+            Assert.Throws<System.ArgumentNullException>(() => new DeviceConfigurationComparison(config, null));
         }
 
         [Fact]
@@ -111,7 +111,7 @@ namespace Core.Tests
         public void ReturnEmptyComparisonListIfNoParametersInConfig()
         {
             var config = new DeviceConfiguration().LoadFromString("");
-            var comparison = new ConfigurationComparison(config, config);
+            var comparison = new DeviceConfigurationComparison(config, config);
             Assert.Empty(comparison.Results);
         }
     }

@@ -7,18 +7,18 @@ namespace CLI
 {
     public class TableBuilder
     {
-        private ConfigurationComparison ConfigurationComparison {get; }
+        private DeviceConfigurationComparison DeviceConfigurationComparison {get; }
         private List<ParameterComparisonRow> FilteredRows {get; set;}
 
-        public TableBuilder(ConfigurationComparison configurationComparison)
+        public TableBuilder(DeviceConfigurationComparison deviceConfigurationComparison)
         {
-            ConfigurationComparison = configurationComparison ?? throw new System.ArgumentNullException(nameof(configurationComparison));
-            FilteredRows = ConfigurationComparison.Results.Select(CreateTableRow).ToList();
+            DeviceConfigurationComparison = deviceConfigurationComparison ?? throw new System.ArgumentNullException(nameof(deviceConfigurationComparison));
+            FilteredRows = DeviceConfigurationComparison.Results.Select(CreateTableRow).ToList();
         }
         
         public void ApplyParameterNameFilter(string subStringToSearchFor)
         {
-            FilteredRows = ConfigurationComparison.Results.Where(x=> 
+            FilteredRows = DeviceConfigurationComparison.Results.Where(x=> 
                     GetParameterName(x).StartsWith(subStringToSearchFor))
                 .Select(CreateTableRow).ToList();
         }
@@ -30,7 +30,7 @@ namespace CLI
         
         public void ApplyResultFilter(ComparisonResult result)
         {
-            FilteredRows = ConfigurationComparison.Results.Where(x=>x.Result == result).Select(CreateTableRow).ToList();
+            FilteredRows = DeviceConfigurationComparison.Results.Where(x=>x.Result == result).Select(CreateTableRow).ToList();
         }
 
         public Table BuildComparisonTable()
@@ -58,12 +58,12 @@ namespace CLI
             targetTable.AddColumn("Parameter");
             targetTable.AddColumn("Value");
 
-            foreach (var metadata in ConfigurationComparison.Source.Metadata)
+            foreach (var metadata in DeviceConfigurationComparison.Source.Metadata)
             {
                 sourceTable.AddRow(metadata.Id, metadata.Value);
             }
 
-            foreach (var metadata in ConfigurationComparison.Target.Metadata)
+            foreach (var metadata in DeviceConfigurationComparison.Target.Metadata)
             {
                 targetTable.AddRow(metadata.Id, metadata.Value);
             }
@@ -79,10 +79,10 @@ namespace CLI
             table.AddColumn(new TableColumn("[green]Added[/]").Centered());
             table.AddColumn(new TableColumn("[red]Removed[/]").Centered());
             table.AddRow(
-                ConfigurationComparison.Results.Count(x=>x.Result==ComparisonResult.Unchanged).ToString(),
-                ConfigurationComparison.Results.Count(x=>x.Result==ComparisonResult.Modified).ToString(),
-                ConfigurationComparison.Results.Count(x=>x.Result==ComparisonResult.Added).ToString(),
-                ConfigurationComparison.Results.Count(x=>x.Result==ComparisonResult.Removed).ToString()).Centered();
+                DeviceConfigurationComparison.Results.Count(x=>x.Result==ComparisonResult.Unchanged).ToString(),
+                DeviceConfigurationComparison.Results.Count(x=>x.Result==ComparisonResult.Modified).ToString(),
+                DeviceConfigurationComparison.Results.Count(x=>x.Result==ComparisonResult.Added).ToString(),
+                DeviceConfigurationComparison.Results.Count(x=>x.Result==ComparisonResult.Removed).ToString()).Centered();
             return table;
         }
 

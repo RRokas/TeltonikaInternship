@@ -14,7 +14,7 @@ namespace CLI
             var source = new DeviceConfiguration().LoadFromFile(sourceConfigFile);
             var target = new DeviceConfiguration().LoadFromFile(targetConfigFile);
             
-            var comparison = new ConfigurationComparison(source, target);
+            var comparison = new DeviceConfigurationComparison(source, target);
             
             var tableBuilder = new TableBuilder(comparison);
             

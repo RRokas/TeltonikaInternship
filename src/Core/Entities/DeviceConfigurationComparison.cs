@@ -4,13 +4,13 @@ using System.Linq;
 
 namespace Core.Entities
 {
-    public class ConfigurationComparison
+    public class DeviceConfigurationComparison
     {
         public List<ConfigurationParameterComparison> Results { get; }
         public DeviceConfiguration Source { get; init; }
         public DeviceConfiguration Target { get; init; }
 
-        public ConfigurationComparison(DeviceConfiguration source, DeviceConfiguration target)
+        public DeviceConfigurationComparison(DeviceConfiguration source, DeviceConfiguration target)
         {
             Source = source;
             Target = target;
