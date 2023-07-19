@@ -4,9 +4,9 @@ namespace Core.Entities
 {
     public class ConfigurationParameterComparison
     {
-        public ConfigurationParameter? Source { get; }
-        public ConfigurationParameter? Target { get; }
-        public ComparisonResult Result { get; }
+        public ConfigurationParameter? Source { get; set; }
+        public ConfigurationParameter? Target { get; set; }
+        public ComparisonResult Result { get; set; }
 
         public ConfigurationParameterComparison(ConfigurationParameter? source, ConfigurationParameter? target)
         {

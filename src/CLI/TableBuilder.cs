@@ -7,18 +7,18 @@ namespace CLI
 {
     public class TableBuilder
     {
-        private Comparison Comparison {get; }
+        private ConfigurationComparison ConfigurationComparison {get; }
         private List<ParameterComparisonRow> FilteredRows {get; set;}
 
-        public TableBuilder(Comparison comparison)
+        public TableBuilder(ConfigurationComparison configurationComparison)
         {
-            Comparison = comparison ?? throw new System.ArgumentNullException(nameof(comparison));
-            FilteredRows = Comparison.Results.Select(CreateTableRow).ToList();
+            ConfigurationComparison = configurationComparison ?? throw new System.ArgumentNullException(nameof(configurationComparison));
+            FilteredRows = ConfigurationComparison.Results.Select(CreateTableRow).ToList();
         }
         
         public void ApplyParameterNameFilter(string subStringToSearchFor)
         {
-            FilteredRows = Comparison.Results.Where(x=> 
+            FilteredRows = ConfigurationComparison.Results.Where(x=> 
                     GetParameterName(x).StartsWith(subStringToSearchFor))
                 .Select(CreateTableRow).ToList();
         }
@@ -30,7 +30,7 @@ namespace CLI
         
         public void ApplyResultFilter(ComparisonResult result)
         {
-            FilteredRows = Comparison.Results.Where(x=>x.Result == result).Select(CreateTableRow).ToList();
+            FilteredRows = ConfigurationComparison.Results.Where(x=>x.Result == result).Select(CreateTableRow).ToList();
         }
 
         public Table BuildComparisonTable()
@@ -58,12 +58,12 @@ namespace CLI
             targetTable.AddColumn("Parameter");
             targetTable.AddColumn("Value");
 
-            foreach (var metadata in Comparison.Source.Metadata)
+            foreach (var metadata in ConfigurationComparison.Source.Metadata)
             {
                 sourceTable.AddRow(metadata.Id, metadata.Value);
             }
 
-            foreach (var metadata in Comparison.Target.Metadata)
+            foreach (var metadata in ConfigurationComparison.Target.Metadata)
             {
                 targetTable.AddRow(metadata.Id, metadata.Value);
             }
@@ -79,10 +79,10 @@ namespace CLI
             table.AddColumn(new TableColumn("[green]Added[/]").Centered());
             table.AddColumn(new TableColumn("[red]Removed[/]").Centered());
             table.AddRow(
-                Comparison.Results.Count(x=>x.Result==ComparisonResult.Unchanged).ToString(),
-                Comparison.Results.Count(x=>x.Result==ComparisonResult.Modified).ToString(),
-                Comparison.Results.Count(x=>x.Result==ComparisonResult.Added).ToString(),
-                Comparison.Results.Count(x=>x.Result==ComparisonResult.Removed).ToString()).Centered();
+                ConfigurationComparison.Results.Count(x=>x.Result==ComparisonResult.Unchanged).ToString(),
+                ConfigurationComparison.Results.Count(x=>x.Result==ComparisonResult.Modified).ToString(),
+                ConfigurationComparison.Results.Count(x=>x.Result==ComparisonResult.Added).ToString(),
+                ConfigurationComparison.Results.Count(x=>x.Result==ComparisonResult.Removed).ToString()).Centered();
             return table;
         }
 
