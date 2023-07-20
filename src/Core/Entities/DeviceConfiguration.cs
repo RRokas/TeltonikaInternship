@@ -10,18 +10,19 @@ namespace Core.Entities
     {
         public List<ConfigurationMetadata> Metadata { get; private set; } = new();
         public List<ConfigurationParameter> Parameters { get; private set; } = new();
-
-        private string ReadConfigString(string filePath)
-        {
-            using var compressedFileStream = File.Open(filePath, FileMode.Open);
-            using var gzip = new GZipStream(compressedFileStream, CompressionMode.Decompress);
-            using var streamReader = new StreamReader(gzip);
-            return streamReader.ReadToEnd();
-        }
+        
         
         public DeviceConfiguration LoadFromFile(FileInfo configFile)
         {
-            var configString = ReadConfigString(configFile.FullName);
+            var streamReader = new StreamReader(configFile.FullName);
+            return LoadFromStream(streamReader.BaseStream);
+        }
+        
+        public DeviceConfiguration LoadFromStream(Stream configStream)
+        {
+            using var gzip = new GZipStream(configStream, CompressionMode.Decompress);
+            using var streamReader = new StreamReader(gzip);
+            var configString = streamReader.ReadToEnd();
             return LoadFromString(configString);
         }
 

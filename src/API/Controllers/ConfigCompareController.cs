@@ -27,27 +27,11 @@ namespace API.Controllers
         [HttpPost]
         public DeviceConfigurationComparisonDto CompareConfigs(IFormFile sourceConfig, IFormFile targetConfig)
         {
-            // save files to disk temporarily
-            var sourceConfigFile = new FileInfo(Path.GetTempFileName());
-            var targetConfigFile = new FileInfo(Path.GetTempFileName());
-            
-            using (var stream = new FileStream(sourceConfigFile.FullName, FileMode.Create))
-            {
-                sourceConfig.CopyTo(stream);
-            }
-            
-            using (var stream = new FileStream(targetConfigFile.FullName, FileMode.Create))
-            {
-                targetConfig.CopyTo(stream);
-            }
-            
-            // load files into DeviceConfiguration objects
-            var source = new DeviceConfiguration().LoadFromFile(sourceConfigFile);
-            var target = new DeviceConfiguration().LoadFromFile(targetConfigFile);
+            var source = new DeviceConfiguration().LoadFromStream(sourceConfig.OpenReadStream());
+            var target = new DeviceConfiguration().LoadFromStream(targetConfig.OpenReadStream());
+
             var comparison = new DeviceConfigurationComparison(source, target);
 
-            //var manualMapper = new CoreMapper().CreateMapper();
-            
             return _mapper.Map<DeviceConfigurationComparisonDto>(comparison);
         }
     }
