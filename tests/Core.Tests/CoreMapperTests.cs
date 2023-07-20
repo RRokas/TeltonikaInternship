@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Core.DTOs;
 using System.Linq;
+using AutoMapper;
 using Core.Entities;
 using Xunit;
 
@@ -17,7 +18,7 @@ namespace Core.Tests
             var target = new DeviceConfiguration().LoadFromString(targetConfigString);
             
             var comparison = new DeviceConfigurationComparison(source, target);
-            var mapper = new CoreMapper().CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<DtoMapProfile>()).CreateMapper();
             var dto = mapper.Map<DeviceConfigurationComparisonDto>(comparison);
             
             Assert.Equal(1, dto.Results.Count);
@@ -35,7 +36,7 @@ namespace Core.Tests
             var target = new DeviceConfiguration().LoadFromString(targetConfigString);
             
             var comparison = new DeviceConfigurationComparison(source, target);
-            var mapper = new CoreMapper().CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<DtoMapProfile>()).CreateMapper();
             var dto = mapper.Map<DeviceConfigurationComparisonDto>(comparison);
             
             Assert.Single(dto.Results);
@@ -53,7 +54,7 @@ namespace Core.Tests
             var target = new DeviceConfiguration().LoadFromString(targetConfigString);
             
             var comparison = new DeviceConfigurationComparison(source, target);
-            var mapper = new CoreMapper().CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<DtoMapProfile>()).CreateMapper();
             var dto = mapper.Map<DeviceConfigurationComparisonDto>(comparison);
             
             Assert.Single(dto.Results);
@@ -69,7 +70,7 @@ namespace Core.Tests
             var configString = "Name:SomeName;Version:1;42:1.2";
             var config = new DeviceConfiguration().LoadFromString(configString);
             
-            var mapper = new CoreMapper().CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<DtoMapProfile>()).CreateMapper();
             var dto = mapper.Map<DeviceConfigurationDto>(config);
             
             Assert.Equal(2, dto.Metadata.Count);
@@ -89,7 +90,7 @@ namespace Core.Tests
             var target = new DeviceConfiguration().LoadFromString(targetConfigString);
             
             var comparison = new DeviceConfigurationComparison(source, target);
-            var mapper = new CoreMapper().CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<DtoMapProfile>()).CreateMapper();
             var dto = mapper.Map<DeviceConfigurationComparisonDto>(comparison);
             
             Assert.Equal(2, dto.Source.Metadata.Count);

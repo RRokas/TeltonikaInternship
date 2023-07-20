@@ -18,10 +18,12 @@ namespace API.Controllers
     public class ConfigCompareController : ControllerBase
     {
         private readonly IMapper _mapper;
-        
-        public ConfigCompareController(IMapper mapper)
+        private readonly ILogger<ConfigCompareController> _logger;
+
+        public ConfigCompareController(IMapper mapper, ILogger<ConfigCompareController> logger)
         {
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpPost]
