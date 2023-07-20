@@ -8,11 +8,16 @@ namespace Core
     {
         public DtoMapProfile()
         {
+            CreateMap<ConfigurationParameterComparison, ConfigurationParameterComparisonDto>();
+            CreateMap<ConfigurationMetadata, ConfigurationMetadataDto>();
+            CreateMap<DeviceConfiguration, DeviceConfigurationDto>();
+            CreateMap<DeviceConfigurationComparison, DeviceConfigurationComparisonDto>();
             CreateMap<ConfigurationParameterComparison, ConfigurationParameterComparisonDto>()
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(MapIdValueFromSourceOrTarget))
                 .ForMember(dto => dto.SourceValue, opt => opt.MapFrom(src => src.Source.Value))
                 .ForMember(dto => dto.TargetValue, opt => opt.MapFrom(src => src.Target.Value))
                 .ForMember(dto => dto.Result, opt => opt.MapFrom(src => src.Result.ToString()));
+
         }
 
         private string MapIdValueFromSourceOrTarget(ConfigurationParameterComparison entity,

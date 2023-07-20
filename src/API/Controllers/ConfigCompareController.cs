@@ -6,6 +6,7 @@ using Core.Entities;
 using Core.DTOs;
 using System.Threading.Tasks;
 using AutoMapper;
+using Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -44,6 +45,9 @@ namespace API.Controllers
             var source = new DeviceConfiguration().LoadFromFile(sourceConfigFile);
             var target = new DeviceConfiguration().LoadFromFile(targetConfigFile);
             var comparison = new DeviceConfigurationComparison(source, target);
+
+            //var manualMapper = new CoreMapper().CreateMapper();
+            
             return _mapper.Map<DeviceConfigurationComparisonDto>(comparison);
         }
     }
