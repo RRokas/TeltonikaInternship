@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Core;
 using Core.DTOs;
@@ -31,7 +33,15 @@ namespace API
         {
             services.AddControllers();
             services.AddAutoMapper(typeof(DtoMapProfile));
-            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" }); });
+            
+            // Enable XML comments for Swagger documentation
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ConfigCompare API", Version = "v1" });
+                c.IncludeXmlComments(xmlPath); // Include the XML comments file
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
