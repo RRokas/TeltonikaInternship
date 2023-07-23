@@ -24,7 +24,7 @@ namespace Core.Tests
             Assert.Equal(1, dto.Results.Count);
             Assert.Equal("0", dto.Results[0].Id);
             Assert.Equal("1", dto.Results[0].TargetValue);
-            Assert.Equal(ComparisonResult.Added.ToString(), dto.Results[0].Result);
+            Assert.Equal(ComparisonResult.Added, dto.Results[0].Result);
         }
 
         [Fact]
@@ -61,7 +61,7 @@ namespace Core.Tests
             Assert.Equal("0", dto.Results[0].Id);
             Assert.Equal("1", dto.Results[0].SourceValue);
             Assert.Equal("2", dto.Results[0].TargetValue);
-            Assert.Equal(ComparisonResult.Modified.ToString(), dto.Results[0].Result);
+            Assert.Equal(ComparisonResult.Modified, dto.Results[0].Result);
         }
         
         [Fact]
