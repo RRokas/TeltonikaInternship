@@ -8,6 +8,7 @@ using Core.DTOs;
 using System.Threading.Tasks;
 using AutoMapper;
 using Core;
+using Core.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

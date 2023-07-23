@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Core.Entities;
+using Core.Enums;
 using Spectre.Console;
 
 namespace CLI

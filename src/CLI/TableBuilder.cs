@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Core.Entities;
+using Core.Enums;
 using Spectre.Console;
 
 namespace CLI
