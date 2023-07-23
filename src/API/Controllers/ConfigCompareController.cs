@@ -34,15 +34,13 @@ namespace API.Controllers
         /// </summary>
         /// <param name="sourceConfig">Configuration file in .cfg format</param>
         /// <param name="targetConfig">Configuration file in .cfg format</param>
-        /// <param name="filter">Optional. Comparison result type or start of parameter IDs can be filtered.</param>
-        /// <param name="filterValue">Optional if filter is not used. Value to filter.</param>
         /// <returns>Metadata of the configuration files and the comparison results (id, value, comparison result)</returns>
         [ProducesResponseType(typeof(DeviceConfigurationComparisonDto), StatusCodes.Status200OK)]
         [Produces("application/json")]
         [HttpPost]
-        public IActionResult CompareConfigs([Required]IFormFile sourceConfig, [Required]IFormFile targetConfig, [FromQuery]ComparisonFilterDto filter)
+        public IActionResult CompareConfigs([Required]IFormFile sourceConfig, [Required]IFormFile targetConfig, [FromQuery, Required]ComparisonFilterDto filter)
         {
-            if(filter != null && string.IsNullOrEmpty(filter.FilterValue))
+            if(filter.FilterType != FilterType.None && string.IsNullOrEmpty(filter.FilterValue))
                 return BadRequest("Filter value is specified, but filter is not set.");
 
             try
@@ -53,17 +51,12 @@ namespace API.Controllers
                 var comparison = new DeviceConfigurationComparison(source, target);
 
                 if (filter == null) return Ok(_mapper.Map<DeviceConfigurationComparisonDto>(comparison));
-                
-                switch (filter.FilterType)
-                {
-                    case FilterType.ComparisonResult:
-                        return Ok(comparison.GetParameterComparisonsByResult(filter.FilterValue));
-                        break;
-                    case FilterType.ParameterIdStartsWith:
-                        return Ok(comparison.GetParameterComparisonsByParameterIdStart(filter.FilterValue));
-                        break;
-                }
-                
+
+                if (filter.FilterType == FilterType.ComparisonResult)
+                    comparison.ApplyResultFilter(filter.FilterValue);
+                else if (filter.FilterType == FilterType.ParameterIdStartsWith) 
+                    comparison.ApplyIdStartFilter(filter.FilterValue);
+
                 return Ok(_mapper.Map<DeviceConfigurationComparisonDto>(comparison));
             }
             catch (Exception e)

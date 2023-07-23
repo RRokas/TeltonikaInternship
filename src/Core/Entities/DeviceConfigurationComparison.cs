@@ -7,7 +7,8 @@ namespace Core.Entities
 {
     public class DeviceConfigurationComparison
     {
-        public List<ConfigurationParameterComparison> Results { get; }
+        public List<ConfigurationParameterComparison> Results { get; private set;}
+        public bool ResultsFiltered { get; set; }
         public DeviceConfiguration Source { get; init; }
         public DeviceConfiguration Target { get; init; }
 
@@ -42,23 +43,17 @@ namespace Core.Entities
             return result;
         }
         
-        public List<ConfigurationParameterComparison> GetParameterComparisonsByResult(string result)
+        public void ApplyResultFilter(string resultToFilter)
         {
-            return Results.Where(x => x.Result.ToString() == result).ToList();
+            ResultsFiltered = true;
+            Results = Results.Where(x => x.Result.ToString() == resultToFilter).ToList();
         }
         
-        public List<ConfigurationParameterComparison> GetParameterComparisonsByParameterIdStart(string subStringToSearchFor)
+        public void ApplyIdStartFilter(string subStringToSearchFor)
         {
-            return Results.Where(x => x.Source?.Id.ToString().StartsWith(subStringToSearchFor) ?? false).ToList();
+            ResultsFiltered = true;
+            Results = Results.Where(x => x.Source?.Id.ToString().StartsWith(subStringToSearchFor) ?? false).ToList();
         }
     
-    }
-
-    public enum ComparisonResult
-    {
-        Unchanged,
-        Modified,
-        Added,
-        Removed
     }
 }

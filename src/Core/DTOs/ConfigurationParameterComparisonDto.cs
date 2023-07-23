@@ -10,6 +10,6 @@ namespace Core.DTOs
         public string SourceValue { get; set; }
         public string TargetValue { get; set; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public ComparisonResult Result { get; set; }
+        public ComparisonResult ComparisonResult { get; set; }
     }
 }
