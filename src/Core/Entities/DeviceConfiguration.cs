@@ -22,8 +22,15 @@ namespace Core.Entities
         {
             using var gzip = new GZipStream(configStream, CompressionMode.Decompress);
             using var streamReader = new StreamReader(gzip);
-            var configString = streamReader.ReadToEnd();
-            return LoadFromString(configString);
+            try
+            {
+                var configString = streamReader.ReadToEnd();
+                return LoadFromString(configString);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidDataException("Invalid configuration file format.", e);
+            }
         }
 
         public DeviceConfiguration LoadFromString(string configString)
