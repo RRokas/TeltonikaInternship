@@ -1,3 +1,6 @@
+using System.Text.Json.Serialization;
+using Core.Entities;
+
 namespace Core.DTOs
 {
     public class ConfigurationParameterComparisonDto
@@ -5,6 +8,7 @@ namespace Core.DTOs
         public string Id { get; set; }
         public string SourceValue { get; set; }
         public string TargetValue { get; set; }
-        public string Result { get; set; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public ComparisonResult Result { get; set; }
     }
 }

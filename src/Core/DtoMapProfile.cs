@@ -16,7 +16,7 @@ namespace Core
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(MapIdValueFromSourceOrTarget))
                 .ForMember(dto => dto.SourceValue, opt => opt.MapFrom(src => src.Source.Value))
                 .ForMember(dto => dto.TargetValue, opt => opt.MapFrom(src => src.Target.Value))
-                .ForMember(dto => dto.Result, opt => opt.MapFrom(src => src.Result.ToString()));
+                .ForMember(dto => dto.Result, opt => opt.MapFrom(src => src.Result));
 
         }
 
