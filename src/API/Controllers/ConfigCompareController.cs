@@ -45,12 +45,10 @@ namespace API.Controllers
 
             try
             {
-                var source = new DeviceConfiguration().LoadFromStream(sourceConfig.OpenReadStream());
-                var target = new DeviceConfiguration().LoadFromStream(targetConfig.OpenReadStream());
+                var source = new DeviceConfiguration().LoadFromStream(sourceConfig.OpenReadStream(), sourceConfig.FileName);
+                var target = new DeviceConfiguration().LoadFromStream(targetConfig.OpenReadStream(), targetConfig.FileName);
 
                 var comparison = new DeviceConfigurationComparison(source, target);
-
-                if (filter == null) return Ok(_mapper.Map<DeviceConfigurationComparisonDto>(comparison));
 
                 if (filter.FilterType == FilterType.ComparisonResult)
                     comparison.ApplyResultFilter(filter.FilterValue);

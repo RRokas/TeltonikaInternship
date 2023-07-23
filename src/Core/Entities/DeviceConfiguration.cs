@@ -10,16 +10,18 @@ namespace Core.Entities
     {
         public List<ConfigurationMetadata> Metadata { get; private set; } = new();
         public List<ConfigurationParameter> Parameters { get; private set; } = new();
+        public string? Filename { get; set; }
         
         
         public DeviceConfiguration LoadFromFile(FileInfo configFile)
         {
             var streamReader = new StreamReader(configFile.FullName);
-            return LoadFromStream(streamReader.BaseStream);
+            return LoadFromStream(streamReader.BaseStream, configFile.Name);
         }
         
-        public DeviceConfiguration LoadFromStream(Stream configStream)
+        public DeviceConfiguration LoadFromStream(Stream configStream, string? filename)
         {
+            Filename = filename;
             using var gzip = new GZipStream(configStream, CompressionMode.Decompress);
             using var streamReader = new StreamReader(gzip);
             try
@@ -53,7 +55,8 @@ namespace Core.Entities
             return new DeviceConfiguration
             {
                 Metadata = metadata,
-                Parameters = parameters
+                Parameters = parameters,
+                Filename = Filename
             };
         }
     }

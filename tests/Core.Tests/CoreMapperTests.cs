@@ -4,6 +4,7 @@ using System.Linq;
 using AutoMapper;
 using Core.Entities;
 using Core.Enums;
+using Core.Tests.Utilities;
 using Xunit;
 
 namespace Core.Tests
@@ -104,6 +105,18 @@ namespace Core.Tests
             Assert.Equal("AnotherName", dto.Target.Metadata[0].Value);
             Assert.Equal("Version", dto.Target.Metadata[1].Id);
             Assert.Equal("2", dto.Target.Metadata[1].Value);
+        }
+
+        [Fact]
+        public void DeviceConfigurationDto_fileNameGetsMapped()
+        {
+            var configFile = TestDataDirectory.GetFile("FMB001-default.cfg");
+            var config = new DeviceConfiguration().LoadFromFile(configFile);
+            
+            var mapper = new MapperConfiguration(cfg => cfg.AddProfile<DtoMapProfile>()).CreateMapper();
+            var dto = mapper.Map<DeviceConfigurationDto>(config);
+            
+            Assert.Equal("FMB001-default.cfg", dto.Filename);
         }
     }
 }
