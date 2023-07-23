@@ -40,6 +40,17 @@ namespace Core.Entities
             
             return result;
         }
+        
+        public List<ConfigurationParameterComparison> GetParameterComparisonsByResult(string result)
+        {
+            return Results.Where(x => x.Result.ToString() == result).ToList();
+        }
+        
+        public List<ConfigurationParameterComparison> GetParameterComparisonsByParameterIdStart(string subStringToSearchFor)
+        {
+            return Results.Where(x => x.Source?.Id.ToString().StartsWith(subStringToSearchFor) ?? false).ToList();
+        }
+    
     }
 
     public enum ComparisonResult
