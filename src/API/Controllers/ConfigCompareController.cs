@@ -6,6 +6,7 @@ using System.Linq;
 using Core.Entities;
 using Core.DTOs;
 using System.Threading.Tasks;
+using API.Attributes;
 using AutoMapper;
 using Core;
 using Core.Enums;
@@ -38,11 +39,12 @@ namespace API.Controllers
         [ProducesResponseType(typeof(DeviceConfigurationComparisonDto), StatusCodes.Status200OK)]
         [Produces("application/json")]
         [HttpPost]
-        public IActionResult CompareConfigs([Required]IFormFile sourceConfig, [Required]IFormFile targetConfig, [FromQuery, Required]ComparisonFilterDto filter)
+        public IActionResult CompareConfigs(
+            [Required, MaxFileSize(5 * 1024 * 1024), AllowedExtensions(new []{".cfg"})] IFormFile sourceConfig,
+            [Required, MaxFileSize(5 * 1024 * 1024), AllowedExtensions(new []{".cfg"})] IFormFile targetConfig,
+            [FromQuery, Required, ComparisonFilterValidation] ComparisonFilterDto filter
+            )
         {
-            if(filter.FilterType != FilterType.None && string.IsNullOrEmpty(filter.FilterValue))
-                return BadRequest("Filter value is specified, but filter is not set.");
-
             try
             {
                 var source = new DeviceConfiguration().LoadFromStream(sourceConfig.OpenReadStream(), sourceConfig.FileName);
@@ -51,9 +53,9 @@ namespace API.Controllers
                 var comparison = new DeviceConfigurationComparison(source, target);
 
                 if (filter.FilterType == FilterType.ComparisonResult)
-                    comparison.ApplyResultFilter(filter.FilterValue);
+                    comparison.ApplyResultFilter(filter.FilterValue!);
                 else if (filter.FilterType == FilterType.ParameterIdStartsWith) 
-                    comparison.ApplyIdStartFilter(filter.FilterValue);
+                    comparison.ApplyIdStartFilter(filter.FilterValue!);
 
                 return Ok(_mapper.Map<DeviceConfigurationComparisonDto>(comparison));
             }
