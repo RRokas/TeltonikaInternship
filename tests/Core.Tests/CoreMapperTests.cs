@@ -22,7 +22,7 @@ namespace Core.Tests
             var mapper = new MapperConfiguration(cfg => cfg.AddProfile<DtoMapProfile>()).CreateMapper();
             var dto = mapper.Map<DeviceConfigurationComparisonDto>(comparison);
             
-            Assert.Equal(1, dto.Results.Count);
+            Assert.Single(dto.Results);
             Assert.Equal("0", dto.Results[0].Id);
             Assert.Equal("1", dto.Results[0].TargetValue);
             Assert.Equal(ComparisonResult.Added, dto.Results[0].ComparisonResult);
