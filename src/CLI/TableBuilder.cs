@@ -26,7 +26,7 @@ namespace CLI
 
         private string GetParameterName(ConfigurationParameterComparison parameterComparison)
         {
-            return parameterComparison.Source?.Id.ToString() ?? parameterComparison.Target?.Id.ToString() ?? string.Empty;
+            return parameterComparison.Source?.Id ?? parameterComparison.Target?.Id ?? string.Empty;
         }
         
         public void ApplyResultFilter(ComparisonResult result)
@@ -89,9 +89,9 @@ namespace CLI
 
         private ParameterComparisonRow CreateTableRow(ConfigurationParameterComparison comparisonResult)
         {
-            var parameterName = comparisonResult.Source?.Id.ToString() ?? comparisonResult.Target?.Id.ToString();
-            var sourceValue = comparisonResult.Source?.Value.ToString() ?? "";
-            var targetValue = comparisonResult.Target?.Value.ToString() ?? "";
+            var parameterName = comparisonResult.Source?.Id ?? comparisonResult.Target?.Id;
+            var sourceValue = comparisonResult.Source?.Value ?? "";
+            var targetValue = comparisonResult.Target?.Value ?? "";
             var comparisonResultString = comparisonResult.Result.ToString();
             
             return new ParameterComparisonRow

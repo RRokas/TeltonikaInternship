@@ -32,8 +32,8 @@ namespace Core.Tests
                 .Where(x=>x.Result == ComparisonResult.Added).ToList();
             
             Assert.Single(addedParameterResults);
-            Assert.Equal("0", addedParameterResults[0].Target.Id.ToString());
-            Assert.Equal("1", addedParameterResults[0].Target.Value.ToString());
+            Assert.Equal("0", addedParameterResults[0].Target.Id);
+            Assert.Equal("1", addedParameterResults[0].Target.Value);
         }
         
         [Fact]
@@ -50,7 +50,7 @@ namespace Core.Tests
             
             Assert.Single(removedParameterResults);
             Assert.Equal("0", removedParameterResults[0].Source.Id);
-            Assert.Equal("1", removedParameterResults[0].Source.Value.ToString());
+            Assert.Equal("1", removedParameterResults[0].Source.Value);
         }
         
         [Fact]
@@ -66,9 +66,9 @@ namespace Core.Tests
                 .Where(x=>x.Result == ComparisonResult.Modified).ToList();
             
             Assert.Single(modifiedParameterResults);
-            Assert.Equal("0", modifiedParameterResults[0].Source.Id.ToString());
-            Assert.Equal("1", modifiedParameterResults[0].Source.Value.ToString());
-            Assert.Equal("2", modifiedParameterResults[0].Target.Value.ToString());
+            Assert.Equal("0", modifiedParameterResults[0].Source.Id);
+            Assert.Equal("1", modifiedParameterResults[0].Source.Value);
+            Assert.Equal("2", modifiedParameterResults[0].Target.Value);
         }
         
         [Fact]
