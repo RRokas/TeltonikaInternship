@@ -23,13 +23,12 @@ namespace API.Controllers
             _mapper = mapper;
             _logger = logger;
         }
-        
-        
         /// <summary>
         /// Compares two device configurations
         /// </summary>
         /// <param name="sourceConfig">Configuration file in .cfg format</param>
         /// <param name="targetConfig">Configuration file in .cfg format</param>
+        /// <param name="filter">Filter options for the comparison results</param>
         /// <returns>Metadata of the configuration files and the comparison results (id, value, comparison result)</returns>
         [ProducesResponseType(typeof(DeviceConfigurationComparisonDto), StatusCodes.Status200OK)]
         [Produces("application/json")]
