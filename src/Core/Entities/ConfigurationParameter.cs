@@ -1,7 +1,4 @@
-﻿using System;
-using System.Globalization;
-
-namespace Core.Entities
+﻿namespace Core.Entities
 {
     public class ConfigurationParameter
     {

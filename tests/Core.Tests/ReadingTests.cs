@@ -1,4 +1,3 @@
-using System.IO;
 using System.Linq;
 using Core.Entities;
 using Core.Tests.Utilities;

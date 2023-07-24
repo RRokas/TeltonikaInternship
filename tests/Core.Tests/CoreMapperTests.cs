@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Core.DTOs;
 using System.Linq;
 using AutoMapper;
