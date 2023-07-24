@@ -32,7 +32,7 @@ namespace Core.Tests
                 .Where(x=>x.Result == ComparisonResult.Added).ToList();
             
             Assert.Single(addedParameterResults);
-            Assert.Equal("0", addedParameterResults[0].Target.Id);
+            Assert.Equal("0", addedParameterResults[0].Target!.Id);
             Assert.Equal("1", addedParameterResults[0].Target.Value);
         }
         
@@ -49,7 +49,7 @@ namespace Core.Tests
                 .Where(x=>x.Result == ComparisonResult.Removed).ToList();
             
             Assert.Single(removedParameterResults);
-            Assert.Equal("0", removedParameterResults[0].Source.Id);
+            Assert.Equal("0", removedParameterResults[0].Source!.Id);
             Assert.Equal("1", removedParameterResults[0].Source.Value);
         }
         

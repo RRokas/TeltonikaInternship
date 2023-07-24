@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Core.DTOs;
 using System.Linq;
 using AutoMapper;
@@ -94,12 +95,12 @@ namespace Core.Tests
             var mapper = new MapperConfiguration(cfg => cfg.AddProfile<DtoMapProfile>()).CreateMapper();
             var dto = mapper.Map<DeviceConfigurationComparisonDto>(comparison);
             
-            Assert.Equal(2, dto.Source.Metadata.Count);
+            Assert.Equal(2, dto.Source!.Metadata!.Count);
             Assert.Equal("Name", dto.Source.Metadata[0].Id);
             Assert.Equal("SomeName", dto.Source.Metadata[0].Value);
             Assert.Equal("Version", dto.Source.Metadata[1].Id);
             Assert.Equal("1", dto.Source.Metadata[1].Value);
-            Assert.Equal(2, dto.Target.Metadata.Count);
+            Assert.Equal(2, dto.Target!.Metadata!.Count);
             Assert.Equal("Name", dto.Target.Metadata[0].Id);
             Assert.Equal("AnotherName", dto.Target.Metadata[0].Value);
             Assert.Equal("Version", dto.Target.Metadata[1].Id);
