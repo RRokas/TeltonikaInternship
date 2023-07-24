@@ -84,17 +84,17 @@ namespace Core.Tests
                 .Where(x=>x.Result == ComparisonResult.Modified).ToList();
             
             Assert.Single(modifiedParameterResults);
-            Assert.Equal("0", modifiedParameterResults[0].Source.Id);
+            Assert.Equal("0", modifiedParameterResults[0].Source!.Id);
             Assert.Equal("1", modifiedParameterResults[0].Source.Value);
-            Assert.Equal("vienas", modifiedParameterResults[0].Target.Value);
+            Assert.Equal("vienas", modifiedParameterResults[0].Target!.Value);
         }
         
         [Fact]
         public void ThrowArgumentExceptionWhenSourceOrTargetIsNull()
         {
             var config = new DeviceConfiguration().LoadFromString("Name:SomeName;Version:1;Multiplier:1.2;ModifiedParameter:1");
-            Assert.Throws<System.ArgumentNullException>(() => new DeviceConfigurationComparison(null, config));
-            Assert.Throws<System.ArgumentNullException>(() => new DeviceConfigurationComparison(config, null));
+            Assert.Throws<System.ArgumentNullException>(() => new DeviceConfigurationComparison(null!, config));
+            Assert.Throws<System.ArgumentNullException>(() => new DeviceConfigurationComparison(config, null!));
         }
 
         [Fact]
