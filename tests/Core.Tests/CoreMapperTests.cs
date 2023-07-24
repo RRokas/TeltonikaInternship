@@ -74,7 +74,7 @@ namespace Core.Tests
             var mapper = new MapperConfiguration(cfg => cfg.AddProfile<DtoMapProfile>()).CreateMapper();
             var dto = mapper.Map<DeviceConfigurationDto>(config);
             
-            Assert.Equal(2, dto.Metadata.Count);
+            Assert.Equal(2, dto.Metadata!.Count);
             Assert.Equal("Name", dto.Metadata[0].Id);
             Assert.Equal("SomeName", dto.Metadata[0].Value);
             Assert.Equal("Version", dto.Metadata[1].Id);
