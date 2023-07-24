@@ -24,8 +24,7 @@ namespace Core
         private string MapIdValueFromSourceOrTarget(ConfigurationParameterComparison entity,
             ConfigurationParameterComparisonDto dto)
         {
-            if (entity.Target != null) return entity.Source != null ? entity.Source.Id : entity.Target.Id;
-            throw new ArgumentException("Both source and target are null");
+            return entity.Source != null ? entity.Source.Id : entity.Target?.Id ?? throw new ArgumentException("Source or target must be not null");
         }
     }
 }
