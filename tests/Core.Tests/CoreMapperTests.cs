@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Core.DTOs;
 using System.Linq;
 using AutoMapper;
