@@ -41,6 +41,8 @@ namespace API.Controllers
         {
             try
             {
+                // log the requesters information with unique session identifier
+                _logger.LogInformation($"Request from {Request.HttpContext.Connection.RemoteIpAddress} to compare {sourceConfig.FileName} and {targetConfig.FileName} received");
                 var source = new DeviceConfiguration().LoadFromStream(sourceConfig.OpenReadStream(), sourceConfig.FileName);
                 var target = new DeviceConfiguration().LoadFromStream(targetConfig.OpenReadStream(), targetConfig.FileName);
 
@@ -55,6 +57,7 @@ namespace API.Controllers
             }
             catch (Exception e)
             {
+                _logger.LogError(e, $"Request from {Request.HttpContext.Connection.RemoteIpAddress} to compare {sourceConfig.FileName} and {targetConfig.FileName} failed");
                 return BadRequest(e.Message);
             }
         }
