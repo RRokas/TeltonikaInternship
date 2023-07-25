@@ -19,13 +19,12 @@ namespace API
 
             try
             {
-                logger.Debug("init main");
+                logger.Debug("Application started. Initializing host...");
                 CreateHostBuilder(args).Build().Run();
             }
             catch (Exception exception)
             {
-                //NLog: catch setup errors
-                logger.Error(exception, "Stopped program because of exception");
+                logger.Error(exception, "Application has been terminated due to an unrecoverable error");
                 throw;
             }
             finally
