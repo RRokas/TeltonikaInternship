@@ -24,14 +24,12 @@ namespace API.Controllers
             _logger = logger;
             _validator = validator;
         }
-
+        
         /// <summary>
-        /// Compares two device configurations
+        /// Compares two device configuration files and returns the result, optionally filtered by a filter.
         /// </summary>
-        /// <param name="sourceConfig">Configuration file in .cfg format</param>
-        /// <param name="targetConfig">Configuration file in .cfg format</param>
-        /// <param name="filter">Filter options for the comparison results</param>
-        /// <returns>Metadata of the configuration files and the comparison results (id, value, comparison result)</returns>
+        /// <param name="request">Wrapper containing source and target definition, filter type. Filter value is required if any filtering is needed.</param>
+        /// <returns></returns>
         [ProducesResponseType(typeof(DeviceConfigurationComparisonDto), StatusCodes.Status200OK)]
         [Produces("application/json")]
         [HttpPost]
