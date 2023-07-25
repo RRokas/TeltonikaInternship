@@ -1,7 +1,9 @@
 using System;
 using System.IO;
 using System.Reflection;
+using API.Configuration;
 using Core;
+using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +27,11 @@ namespace API
         {
             services.AddControllers();
             services.AddAutoMapper(typeof(DtoMapProfile));
+            
+            services.Configure<ComparisonRequestSettings>(Configuration.GetSection("ComparisonRequestSettings"));
+
+            services.AddValidatorsFromAssemblyContaining<ComparisonRequest>();
+            
             
             // Enable XML comments for Swagger documentation
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";

@@ -1,10 +1,9 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using Core.Entities;
 using Core.DTOs;
-using API.Attributes;
 using AutoMapper;
 using Core.Enums;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,12 +16,15 @@ namespace API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ILogger<ConfigCompareController> _logger;
+        private readonly IValidator<ComparisonRequest> _validator;
 
-        public ConfigCompareController(IMapper mapper, ILogger<ConfigCompareController> logger)
+        public ConfigCompareController(IMapper mapper, ILogger<ConfigCompareController> logger, IValidator<ComparisonRequest> validator)
         {
             _mapper = mapper;
             _logger = logger;
+            _validator = validator;
         }
+
         /// <summary>
         /// Compares two device configurations
         /// </summary>
@@ -33,24 +35,33 @@ namespace API.Controllers
         [ProducesResponseType(typeof(DeviceConfigurationComparisonDto), StatusCodes.Status200OK)]
         [Produces("application/json")]
         [HttpPost]
-        public IActionResult CompareConfigs(
-            [Required, MaxFileSize(5 * 1024 * 1024), AllowedExtensions(new []{".cfg"})] IFormFile sourceConfig,
-            [Required, MaxFileSize(5 * 1024 * 1024), AllowedExtensions(new []{".cfg"})] IFormFile targetConfig,
-            [FromQuery, Required, ComparisonFilterValidation] ComparisonFilterDto filter
-            )
+        public IActionResult CompareConfigs([FromForm]ComparisonRequest request)
         {
+            var validationResult = _validator.Validate(request);
+            if (!validationResult.IsValid)
+            {
+                _logger.LogError($"Request from {Request.HttpContext.Connection.RemoteIpAddress} failed validation");
+                return BadRequest(validationResult.ToDictionary());
+            }
+            
+            var sourceConfig = request.SourceFile;
+            var targetConfig = request.TargetFile;
+            
             try
             {
-                // log the requesters information with unique session identifier
-                _logger.LogInformation($"Request from {Request.HttpContext.Connection.RemoteIpAddress} to compare {sourceConfig.FileName} and {targetConfig.FileName} received");
-                var source = new DeviceConfiguration().LoadFromStream(sourceConfig.OpenReadStream(), sourceConfig.FileName);
-                var target = new DeviceConfiguration().LoadFromStream(targetConfig.OpenReadStream(), targetConfig.FileName);
+                _logger.LogInformation(
+                    $"Request from {Request.HttpContext.Connection.RemoteIpAddress} to compare {sourceConfig.FileName} and {targetConfig.FileName} received");
+                var source =
+                    new DeviceConfiguration().LoadFromStream(sourceConfig.OpenReadStream(), sourceConfig.FileName);
+                var target =
+                    new DeviceConfiguration().LoadFromStream(targetConfig.OpenReadStream(), targetConfig.FileName);
 
                 var comparison = new DeviceConfigurationComparison(source, target);
-
+                
+                var filter = request.Filter;
                 if (filter.FilterType == FilterType.ComparisonResult)
                     comparison.ApplyResultFilter(filter.FilterValue!);
-                else if (filter.FilterType == FilterType.ParameterIdStartsWith) 
+                else if (filter.FilterType == FilterType.ParameterIdStartsWith)
                     comparison.ApplyIdStartFilter(filter.FilterValue!);
 
                 return Ok(_mapper.Map<DeviceConfigurationComparisonDto>(comparison));
@@ -67,7 +78,8 @@ namespace API.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"Request from {Request.HttpContext.Connection.RemoteIpAddress} to compare {sourceConfig.FileName} and {targetConfig.FileName} failed");
+                _logger.LogError(e,
+                    $"Request from {Request.HttpContext.Connection.RemoteIpAddress} to compare {sourceConfig.FileName} and {targetConfig.FileName} failed");
                 return BadRequest("An unexpected error occurred.");
             }
         }
