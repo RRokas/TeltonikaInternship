@@ -55,10 +55,20 @@ namespace API.Controllers
 
                 return Ok(_mapper.Map<DeviceConfigurationComparisonDto>(comparison));
             }
+            catch (ArgumentNullException e)
+            {
+                _logger.LogError(e, $"Invalid argument supplied in {e.ParamName}");
+                return BadRequest("One or more input parameters are invalid.");
+            }
+            catch (InvalidOperationException e)
+            {
+                _logger.LogError(e, $"There's an issue with the comparison");
+                return BadRequest("An error occured during comparison operation.");
+            }
             catch (Exception e)
             {
                 _logger.LogError(e, $"Request from {Request.HttpContext.Connection.RemoteIpAddress} to compare {sourceConfig.FileName} and {targetConfig.FileName} failed");
-                return BadRequest(e.Message);
+                return BadRequest("An unexpected error occurred.");
             }
         }
     }
