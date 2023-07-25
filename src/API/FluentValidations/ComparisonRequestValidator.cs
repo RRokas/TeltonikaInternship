@@ -27,7 +27,9 @@ public class FormFileValidator : AbstractValidator<ComparisonRequest>
             .Must(HaveFilterValueWhenFilterTypeIsNotNone)
             .WithMessage("Filter value must be provided when filter type is not None.")
             .Must(BeValidFilterType)
-            .WithMessage($"Filter type must be one of the following: {string.Join(",", Enum.GetNames(typeof(FilterType)))}");
+            .WithMessage($"Filter type must be one of the following: {string.Join(",", Enum.GetNames(typeof(FilterType)))}")
+            .Must(BeAnEnumValueWhenFilterIsByComparisonResult)
+            .WithMessage($"When filtering by result, filter value must be one of the following : {string.Join(", ", Enum.GetNames(typeof(ComparisonResult)))}");
     }
     
     private void ApplyFileRules(Expression<Func<ComparisonRequest, IFormFile>> expression, string propertyName)
@@ -39,6 +41,11 @@ public class FormFileValidator : AbstractValidator<ComparisonRequest>
             .WithMessage($"{propertyName} file size must be less than {_settings.MaxSize / 1024}KB.")
             .Must(BeAnAllowedFileExtension)
             .WithMessage($"{propertyName} file extension must be one of the following: {string.Join(", ", _settings.AllowedExtensions)}");
+    }
+    
+    private bool BeAnEnumValueWhenFilterIsByComparisonResult(ComparisonFilterDto filter)
+    {
+        return filter.FilterValue != null && filter.FilterType == FilterType.ComparisonResult && Enum.IsDefined(typeof(ComparisonResult), filter.FilterValue);
     }
     
     private bool BeValidFilterType(ComparisonFilterDto filter)
