@@ -5,15 +5,16 @@ using Core.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API;
-
-public class ComparisonRequest
+namespace API
 {
-    [Required]
-    public IFormFile SourceFile { get; set; }
-    [Required]
-    public IFormFile TargetFile { get; set; }
-    
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ComparisonFilterDto Filter { get; set; }
+    public class ComparisonRequest
+    {
+        [Required] 
+        public IFormFile SourceFile { get; set; }
+        [Required] 
+        public IFormFile TargetFile { get; set; }
+
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public ComparisonFilterDto Filter { get; set; }
+    }
 }

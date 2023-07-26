@@ -1,8 +1,9 @@
-namespace API.Configuration;
-
-public class ComparisonRequestSettings
+namespace API.Configuration
 {
-    public long MaxSize { get; set; }
+    public class ComparisonRequestSettings
+    {
+        public long MaxSize { get; set; }
 
-    public string[] AllowedExtensions { get; set; }
+        public string[] AllowedExtensions { get; set; }
+    }
 }
