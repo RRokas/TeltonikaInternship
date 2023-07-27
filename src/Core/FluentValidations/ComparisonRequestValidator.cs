@@ -8,7 +8,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-namespace API.FluentValidations
+namespace Core.FluentValidations
 {
     public class ComparisonRequestValidator : AbstractValidator<ComparisonRequest>
     {
