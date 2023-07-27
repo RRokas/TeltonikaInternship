@@ -10,11 +10,11 @@ using Microsoft.Extensions.Options;
 
 namespace API.FluentValidations
 {
-    public class FormFileValidator : AbstractValidator<ComparisonRequest>
+    public class ComparisonRequestValidator : AbstractValidator<ComparisonRequest>
     {
         private readonly ComparisonRequestSettings _settings;
 
-        public FormFileValidator(IOptions<ComparisonRequestSettings> options)
+        public ComparisonRequestValidator(IOptions<ComparisonRequestSettings> options)
         {
             _settings = options.Value;
 
