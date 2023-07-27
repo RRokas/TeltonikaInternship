@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using API.Configuration;
 using Core.DTOs;
 using Core.Enums;
+using Core.FluentValidations.Configuration;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;

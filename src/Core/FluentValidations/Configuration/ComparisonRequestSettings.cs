@@ -1,4 +1,4 @@
-namespace API.Configuration
+namespace Core.FluentValidations.Configuration
 {
     public class ComparisonRequestSettings
     {

@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Reflection;
-using API.Configuration;
 using Core;
 using Core.DTOs;
+using Core.FluentValidations.Configuration;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
