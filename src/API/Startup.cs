@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using API.Configuration;
 using Core;
+using Core.DTOs;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,6 +32,7 @@ namespace API
             services.Configure<ComparisonRequestSettings>(Configuration.GetSection("ComparisonRequestSettings"));
 
             services.AddValidatorsFromAssemblyContaining<ComparisonRequest>();
+            services.AddValidatorsFromAssemblyContaining<Startup>();
             
             
             // Enable XML comments for Swagger documentation

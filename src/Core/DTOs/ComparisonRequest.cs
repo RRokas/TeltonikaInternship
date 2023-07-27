@@ -1,11 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using Core.DTOs;
-using Core.Enums;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
-namespace API
+namespace Core.DTOs
 {
     public class ComparisonRequest
     {
