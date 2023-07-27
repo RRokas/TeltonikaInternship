@@ -5,10 +5,10 @@ namespace Core.DTOs
 {
     public class ConfigurationParameterComparisonDto
     {
-        public string? Id { get; set; }
-        public string? SourceValue { get; set; }
-        public string? TargetValue { get; set; }
+        public string? Id { get; init; }
+        public string? SourceValue { get; init; }
+        public string? TargetValue { get; init; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public ComparisonResult ComparisonResult { get; set; }
+        public ComparisonResult ComparisonResult { get; init; }
     }
 }

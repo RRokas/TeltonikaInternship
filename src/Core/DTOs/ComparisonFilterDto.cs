@@ -7,7 +7,7 @@ namespace Core.DTOs
     public class ComparisonFilterDto
     {
         [JsonConverter(typeof(JsonStringEnumConverter)), Required]
-        public FilterType FilterType { get; set; }
-        public string? FilterValue { get; set; }
+        public FilterType FilterType { get; init; }
+        public string? FilterValue { get; init; }
     }
 }
