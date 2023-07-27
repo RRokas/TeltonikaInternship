@@ -5,10 +5,10 @@ using Xunit;
 
 namespace Core.Tests
 {
-    public class ReadingTests
+    public class DeviceConfigurationTests
     {
         [Fact]
-        public void ReadValidConfig()
+        public void DoesNotFailWhenLoadingFromFile()
         {
             var configFile = TestDataDirectory.GetFile("FMB001-default.cfg");
             var config = new DeviceConfiguration().LoadFromFile(configFile);
