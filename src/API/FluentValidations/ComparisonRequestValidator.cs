@@ -27,10 +27,10 @@ namespace API.FluentValidations
                 .Must(HaveFilterValueWhenFilterTypeIsNotNone)
                 .WithMessage("Filter value must be provided when filter type is not None.")
                 .Must(BeValidFilterType)
-                .WithMessage($"Filter type must be one of the following:" +
+                .WithMessage("Filter type must be one of the following:" +
                              $" {string.Join(",", Enum.GetNames(typeof(FilterType)))}")
                 .Must(BeAnEnumValueWhenFilterIsByComparisonResult)
-                .WithMessage($"When filtering by result, filter value must be one of the following :" +
+                .WithMessage("When filtering by result, filter value must be one of the following :" +
                              $" {string.Join(", ", Enum.GetNames(typeof(ComparisonResult)))}");
         }
 
@@ -47,10 +47,21 @@ namespace API.FluentValidations
         }
 
         private bool BeAnEnumValueWhenFilterIsByComparisonResult(ComparisonFilterDto filter)
-        {
-            return filter.FilterValue != null && filter.FilterType == FilterType.ComparisonResult &&
-                   Enum.IsDefined(typeof(ComparisonResult), filter.FilterValue);
-        }
+         {
+             return 
+                    (filter.FilterValue != null && IsComparisonResultFilterWithValidEnum(filter)) || IsNotComparisonResultFilter(filter);
+         }
+         
+         private static bool IsComparisonResultFilterWithValidEnum(ComparisonFilterDto filter)
+         {
+             return filter.FilterType == FilterType.ComparisonResult &&
+                    Enum.IsDefined(typeof(ComparisonResult), filter.FilterValue);
+         }
+         
+         private static bool IsNotComparisonResultFilter(ComparisonFilterDto filter)
+         {
+             return filter.FilterType != FilterType.ComparisonResult;
+         }
 
         private bool BeValidFilterType(ComparisonFilterDto filter)
         {
