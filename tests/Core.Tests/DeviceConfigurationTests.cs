@@ -1,3 +1,4 @@
+using System.IO;
 using System.Linq;
 using Core.Entities;
 using Core.Tests.Utilities;
@@ -8,12 +9,21 @@ namespace Core.Tests
     public class DeviceConfigurationTests
     {
         [Fact]
-        public void DoesNotFailWhenLoadingFromFile()
+        public void DoesNotFailWhenLoadingFromValidFile()
         {
             var configFile = TestDataDirectory.GetFile("FMB001-default.cfg");
             var config = new DeviceConfiguration().LoadFromFile(configFile);
             
             Assert.NotNull(config.Parameters);
+        }
+
+        [Fact]
+        public void ThrowsDataExceptionWhenUnableToOpenAsArchive()
+        {
+            var configFile = TestDataDirectory.GetFile("FMB001-invalid.cfg");
+            var config = new DeviceConfiguration();
+            
+            Assert.Throws<InvalidDataException>(() => config.LoadFromFile(configFile));
         }
         
         [Fact]

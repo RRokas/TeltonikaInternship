@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Core.Tests
 {
-    public class ComparisonTests
+    public class DeviceConfigurationComparisonTests
     {
         [Fact]
         public void CompareIdenticalConfigs()
@@ -114,6 +114,60 @@ namespace Core.Tests
             var config = new DeviceConfiguration().LoadFromString("");
             var comparison = new DeviceConfigurationComparison(config, config);
             Assert.Empty(comparison.Results);
+        }
+        
+                [Fact]
+        public void FilterByResultEnumWorks()
+        {
+            var sourceConfig = new DeviceConfiguration().LoadFromString("1:20;2:30");
+            var targetConfig = new DeviceConfiguration().LoadFromString("1:20;2:40");
+            var comparison = new DeviceConfigurationComparison(sourceConfig, targetConfig);
+            
+            comparison.ApplyResultFilter(ComparisonResult.Modified.ToString());
+            
+            Assert.Single(comparison.Results);
+            Assert.Equal("2", comparison.Results[0].Source.Id);
+            Assert.Equal("30", comparison.Results[0].Source.Value);
+            Assert.Equal("2", comparison.Results[0].Target.Id);
+            Assert.Equal("40", comparison.Results[0].Target.Value);
+            
+            Assert.True(comparison.ResultsFiltered);
+        }
+        
+        [Fact]
+        public void FilterByIdStartWorks()
+        {
+            var sourceConfig = new DeviceConfiguration().LoadFromString("10:20;22:30;23:20");
+            var targetConfig = new DeviceConfiguration().LoadFromString("10:20;22:40;23:21");
+            var comparison = new DeviceConfigurationComparison(sourceConfig, targetConfig);
+            
+            comparison.ApplyIdStartFilter("2");
+            
+            Assert.Equal(2, comparison.Results.Count);
+            Assert.Equal("22", comparison.Results[0].Source.Id);
+            Assert.Equal("30", comparison.Results[0].Source.Value);
+            Assert.Equal("22", comparison.Results[0].Target.Id);
+            Assert.Equal("40", comparison.Results[0].Target.Value);
+            Assert.Equal("23", comparison.Results[1].Source.Id);
+            Assert.Equal("20", comparison.Results[1].Source.Value);
+            Assert.Equal("23", comparison.Results[1].Target.Id);
+            Assert.Equal("21", comparison.Results[1].Target.Value);
+            
+            Assert.True(comparison.ResultsFiltered);
+        }
+        
+        [Fact]
+        public void FilterCanReturnEmptyResults()
+        {
+            var sourceConfig = new DeviceConfiguration().LoadFromString("10:20;22:30;23:20");
+            var targetConfig = new DeviceConfiguration().LoadFromString("10:20;22:40;23:21");
+            var comparison = new DeviceConfigurationComparison(sourceConfig, targetConfig);
+            
+            comparison.ApplyIdStartFilter("3");
+            
+            Assert.Empty(comparison.Results);
+            Assert.True(comparison.ResultsFiltered);
+            Assert.True(comparison.ResultsFiltered);
         }
     }
 }
