@@ -1,0 +1,91 @@
+@using Core.DTOs
+@using Core.Enums
+@using Microsoft.Net.Http.Headers
+@using MediaTypeHeaderValue = System.Net.Http.Headers.MediaTypeHeaderValue
+@using Newtonsoft.Json
+@namespace WebUI.CustomComponents
+
+<form
+    class="m-5"
+    enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="sourceFile" class="form-label">Source configuration file</label>
+        <InputFile accept=".cfg" class="form-control" OnChange="HandleSourceFileChanged"/>
+    </div>
+    <div class="form-group mt-3">
+        <label for="targetFile" class="form-label">Target configuration file</label>
+        <InputFile accept=".cfg" class="form-control" OnChange="HandleTargetFileChanged"/>
+    </div>
+    <div class="form-group mt-3">
+        <label for="filter" class="form-label">Filter</label>
+        <select name="filter" id="filter" class="form-control" @bind="_selectedFilterType" required>
+            @foreach(var filterName in Enum.GetNames(typeof(FilterType)))
+            {
+                <option value="@filterName">@filterName</option>
+            }
+        </select>
+        <label for="filterValue"></label>
+        @if (_selectedFilterType == FilterType.ComparisonResult.ToString())
+        {
+            <select name="filterValue" @bind="_filterValue" id="filterValue" class="form-control mt-2" required>
+                @foreach(var comparisonResult in Enum.GetNames(typeof(ComparisonResult)))
+                {
+                    <option value="@comparisonResult">@comparisonResult</option>
+                }
+            </select>
+        }
+        else
+        {
+            <input type="text" class="form-control mt-2" name="filterValue" id="filterValue" required />
+        }
+    </div>
+</form>
+<div class="form-group mt-4">
+        <button @onclick="SendComparisonRequest" class="btn btn-primary">Compare</button>
+    </div>
+
+@code {
+    private string _selectedFilterType = Enum.GetNames(typeof(FilterType)).First();
+    private string _filterValue = string.Empty;
+    private IBrowserFile _sourceFile;
+    private IBrowserFile _targetFile;
+    
+
+    private async Task SendComparisonRequest()
+    {
+        var formContent = new MultipartFormDataContent();
+        
+        var sourceConfig = CreateStreamContent(_sourceFile);
+        var targetConfig = CreateStreamContent(_targetFile);
+        
+        formContent.Add(sourceConfig, "SourceFile", _sourceFile.Name);
+        formContent.Add(targetConfig, "TargetFile", _targetFile.Name);
+        formContent.Add(new StringContent(_selectedFilterType), "Filter.FilterType");
+        formContent.Add(new StringContent(_filterValue), "Filter.FilterValue");
+        
+        var handler = new HttpClientHandler();
+        handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+        var client = new HttpClient(handler);
+        var response = await client.PostAsync("https://127.0.0.1:5001/ConfigCompare", formContent);
+        var json = await response.Content.ReadAsStringAsync();
+        var result = JsonConvert.DeserializeObject<DeviceConfigurationComparisonDto>(json);
+    }
+    
+    private StreamContent CreateStreamContent(IBrowserFile file)
+    {
+        var stream = file.OpenReadStream();
+        var content = new StreamContent(stream);
+        content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+        return content;
+    }
+    
+    private void HandleSourceFileChanged(InputFileChangeEventArgs e)
+    {
+        _sourceFile = e.File;
+    }
+
+    private void HandleTargetFileChanged(InputFileChangeEventArgs e)
+    {
+        _targetFile = e.File;
+    }
+}
