@@ -6,7 +6,6 @@
 @namespace WebUI.CustomComponents
 
 <form
-    class="m-5"
     enctype="multipart/form-data">
     <div class="form-group">
         <label for="sourceFile" class="form-label">Source configuration file</label>
@@ -18,17 +17,17 @@
     </div>
     <div class="form-group mt-3">
         <label for="filter" class="form-label">Filter</label>
-        <select name="filter" id="filter" class="form-control" @bind="_selectedFilterType" required>
-            @foreach(var filterName in Enum.GetNames(typeof(FilterType)))
+        <select name="filter" id="filter" class="form-control" @onchange="HandleFilterTypeChange" required>
+            @foreach (var filterName in Enum.GetNames(typeof(FilterType)))
             {
                 <option value="@filterName">@filterName</option>
             }
         </select>
-        <label for="filterValue"></label>
+        <label class="form-label mt-2" for="filterValue">Filter value</label>
         @if (_selectedFilterType == FilterType.ComparisonResult.ToString())
         {
             <select name="filterValue" @bind="_filterValue" id="filterValue" class="form-control mt-2" required>
-                @foreach(var comparisonResult in Enum.GetNames(typeof(ComparisonResult)))
+                @foreach (var comparisonResult in Enum.GetNames(typeof(ComparisonResult)))
                 {
                     <option value="@comparisonResult">@comparisonResult</option>
                 }
@@ -36,49 +35,63 @@
         }
         else
         {
-            <input type="text" class="form-control mt-2" name="filterValue" id="filterValue" required />
+            <input disabled=@(_selectedFilterType==FilterType.None.ToString())
+                   type="text" 
+                   class="form-control mt-2" 
+                   name="filterValue" 
+                   @bind="_filterValue"
+                   placeholder="@GetPlaceholderValue(ParseStringToFilterType(_selectedFilterType))" 
+                   required/>
         }
     </div>
-</form>
-<div class="form-group mt-4">
-        <button @onclick="SendComparisonRequest" class="btn btn-primary">Compare</button>
+    <div class="form-group mt-4">
+        <button type="button" @onclick="SendComparisonRequest" class="btn btn-primary">Compare</button>
     </div>
+</form>
+
 
 @code {
-    private string _selectedFilterType = Enum.GetNames(typeof(FilterType)).First();
+    private string _selectedFilterType = FilterType.None.ToString();
     private string _filterValue = string.Empty;
-    private IBrowserFile _sourceFile;
-    private IBrowserFile _targetFile;
-    
+    private string _lastStringInput = string.Empty;
+    private IBrowserFile? _sourceFile;
+    private IBrowserFile? _targetFile;
+
+    [Parameter]
+    public EventCallback<DeviceConfigurationComparisonDto> OnSendComparisonResult { get; set; }
 
     private async Task SendComparisonRequest()
     {
+        _ = _sourceFile ?? throw new ArgumentNullException(nameof(_sourceFile));
+        _ = _targetFile ?? throw new ArgumentNullException(nameof(_targetFile));
+
         var formContent = new MultipartFormDataContent();
-        
+
         var sourceConfig = CreateStreamContent(_sourceFile);
         var targetConfig = CreateStreamContent(_targetFile);
-        
+
         formContent.Add(sourceConfig, "SourceFile", _sourceFile.Name);
         formContent.Add(targetConfig, "TargetFile", _targetFile.Name);
         formContent.Add(new StringContent(_selectedFilterType), "Filter.FilterType");
         formContent.Add(new StringContent(_filterValue), "Filter.FilterValue");
-        
+
         var handler = new HttpClientHandler();
         handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
         var client = new HttpClient(handler);
         var response = await client.PostAsync("https://127.0.0.1:5001/ConfigCompare", formContent);
         var json = await response.Content.ReadAsStringAsync();
         var result = JsonConvert.DeserializeObject<DeviceConfigurationComparisonDto>(json);
+        await OnSendComparisonResult.InvokeAsync(result);
     }
-    
-    private StreamContent CreateStreamContent(IBrowserFile file)
+
+    private StreamContent CreateStreamContent(IBrowserFile? file)
     {
         var stream = file.OpenReadStream();
         var content = new StreamContent(stream);
         content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
         return content;
     }
-    
+
     private void HandleSourceFileChanged(InputFileChangeEventArgs e)
     {
         _sourceFile = e.File;
@@ -87,5 +100,42 @@
     private void HandleTargetFileChanged(InputFileChangeEventArgs e)
     {
         _targetFile = e.File;
+    }
+    
+    private FilterType ParseStringToFilterType(string input)
+    {
+        Enum.TryParse(input, out FilterType filterType);
+        return filterType;
+    }
+
+    private string GetPlaceholderValue(FilterType filterType)
+    {
+        return filterType switch
+        {
+            FilterType.None => "Filter is not used",
+            FilterType.ParameterIdStartsWith => "Filter IDs that start with...",
+            _ => string.Empty
+        };
+    }
+
+    private void HandleFilterTypeChange(ChangeEventArgs eventArgs)
+    {
+        // Save last string input if filter type is changed from ParameterIdStartsWith to another
+        if(_selectedFilterType == FilterType.ParameterIdStartsWith.ToString())
+            _lastStringInput = _filterValue;
+
+        // Set filter value to last string input if filter type is changed from another to ParameterIdStartsWith
+        if (eventArgs.Value as string == FilterType.ParameterIdStartsWith.ToString())
+            _filterValue = _lastStringInput;
+        
+        // Set filter value to first enum value if filter type is changed to ComparisonResult
+        if(eventArgs.Value as string == FilterType.ComparisonResult.ToString())
+            _filterValue = Enum.GetNames(typeof(ComparisonResult)).First();
+        
+        // Set filter value to empty string if filter type is changed to None
+        if(eventArgs.Value as string == FilterType.None.ToString())
+            _filterValue = string.Empty;
+        
+        _selectedFilterType = eventArgs.Value as string ?? string.Empty;
     }
 }
