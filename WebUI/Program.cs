@@ -1,13 +1,9 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using WebUI.Data;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-AddHttpClientIgnoringSsl(builder.Services);
+AddHttpClientIgnoringSsl(builder.Services, builder.Configuration);
 
 var app = builder.Build();
 
@@ -30,11 +26,20 @@ app.MapFallbackToPage("/_Host");
 
 app.Run();
 
-static void AddHttpClientIgnoringSsl(IServiceCollection services)
+static void AddHttpClientIgnoringSsl(IServiceCollection services, IConfiguration configuration)
 {
-    services.AddHttpClient("IgnoreSslErrors").ConfigurePrimaryHttpMessageHandler(() =>
-        new HttpClientHandler
+    var ignoreSslErrors = configuration.GetValue<bool>("ComparisonHttpClient:IgnoreSslErrors");
+    var baseAddress = configuration["ComparisonHttpClient:BaseAddress"];
+
+    services.AddHttpClient("ComparisonClient", client =>
         {
-            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-        });
+            client.BaseAddress = new Uri(baseAddress);
+        })
+        .ConfigurePrimaryHttpMessageHandler(() =>
+            new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = ignoreSslErrors 
+                    ? HttpClientHandler.DangerousAcceptAnyServerCertificateValidator 
+                    : null
+            });
 }

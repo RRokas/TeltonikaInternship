@@ -5,6 +5,13 @@
 @using Newtonsoft.Json
 @namespace WebUI.CustomComponents
 
+@if(_errorMessage != string.Empty)
+{
+    <div class="alert alert-danger" role="alert">
+        @_errorMessage
+    </div>
+}
+
 <form
     enctype="multipart/form-data">
     <div class="form-group">
@@ -49,21 +56,29 @@
     </div>
 </form>
 
-
+@inject IHttpClientFactory ClientFactory
 @code {
     private string _selectedFilterType = FilterType.None.ToString();
     private string _filterValue = string.Empty;
     private string _lastStringInput = string.Empty;
     private IBrowserFile? _sourceFile;
     private IBrowserFile? _targetFile;
+    private string _errorMessage = string.Empty;
 
     [Parameter]
     public EventCallback<DeviceConfigurationComparisonDto> OnSendComparisonResult { get; set; }
 
     private async Task SendComparisonRequest()
     {
-        _ = _sourceFile ?? throw new ArgumentNullException(nameof(_sourceFile));
-        _ = _targetFile ?? throw new ArgumentNullException(nameof(_targetFile));
+        // _ = _sourceFile ?? throw new ArgumentNullException(nameof(_sourceFile));
+        // _ = _targetFile ?? throw new ArgumentNullException(nameof(_targetFile));
+        _errorMessage = string.Empty;
+        if (_sourceFile == null || _targetFile == null)
+        {
+            _errorMessage = "Source and target files must be selected";
+            return;
+        }
+        
 
         var formContent = new MultipartFormDataContent();
 
@@ -75,11 +90,10 @@
         formContent.Add(new StringContent(_selectedFilterType), "Filter.FilterType");
         formContent.Add(new StringContent(_filterValue), "Filter.FilterValue");
 
-        var handler = new HttpClientHandler();
-        handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
-        var client = new HttpClient(handler);
-        var response = await client.PostAsync("https://127.0.0.1:5001/ConfigCompare", formContent);
+        var client = ClientFactory.CreateClient("ComparisonClient");
+        var response = await client.PostAsync("/ConfigCompare", formContent);
         var json = await response.Content.ReadAsStringAsync();
+        Console.WriteLine(json);
         var result = JsonConvert.DeserializeObject<DeviceConfigurationComparisonDto>(json);
         await OnSendComparisonResult.InvokeAsync(result);
     }
