@@ -7,7 +7,7 @@
     </div>
     <div class="card-body">
         <ul>
-            @foreach(var item in DeviceConfiguration.Metadata)
+            @foreach (var item in DeviceConfiguration.Metadata!)
             {
                 <li><strong>@item.Id:</strong> @item.Value</li>
             }
@@ -17,5 +17,5 @@
 
 @code {
     [Parameter]
-    public DeviceConfigurationDto DeviceConfiguration { get; set; }
+    public DeviceConfigurationDto DeviceConfiguration { get; set; } = new DeviceConfigurationDto();
 }
