@@ -1,0 +1,45 @@
+﻿@using Core.DTOs
+@using Core.Enums
+
+@namespace WebUI.CustomComponents
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Source</th>
+        <th scope="col">Target</th>
+        <th scope="col">Result</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (DeviceConfigurationComparison is not null)
+    {
+        @foreach (var comparison in DeviceConfigurationComparison.Results)
+        {
+            <tr class="@GetRowClass(comparison.ComparisonResult)">
+                <td>@comparison.Id</td>
+                <td>@comparison.SourceValue</td>
+                <td>@comparison.TargetValue</td>
+                <td>@comparison.ComparisonResult</td>
+            </tr>
+        }
+    }
+    </tbody>
+</table>
+
+@code {    
+    [Parameter]
+    public DeviceConfigurationComparisonDto? DeviceConfigurationComparison { get; set; }
+
+    private string GetRowClass(ComparisonResult comparisonResult)
+    {
+        return comparisonResult switch
+        {
+            ComparisonResult.Added => "table-success",
+            ComparisonResult.Modified => "table-warning",
+            ComparisonResult.Removed => "table-danger",
+            _ => ""
+        };
+    }
+}
