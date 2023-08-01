@@ -1,0 +1,21 @@
+﻿@using Core.DTOs
+@namespace WebUI.CustomComponents
+
+<div class="card">
+    <div class="card-header">
+        @DeviceConfiguration.Filename
+    </div>
+    <div class="card-body">
+        <ul>
+            @foreach (var item in DeviceConfiguration.Metadata!)
+            {
+                <li><strong>@item.Id:</strong> @item.Value</li>
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public DeviceConfigurationDto DeviceConfiguration { get; set; } = new DeviceConfigurationDto();
+}
