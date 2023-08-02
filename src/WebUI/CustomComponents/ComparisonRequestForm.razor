@@ -93,7 +93,6 @@
         var client = ClientFactory.CreateClient("ComparisonClient");
         var response = await client.PostAsync("/ConfigCompare", formContent);
         var json = await response.Content.ReadAsStringAsync();
-        Console.WriteLine(json);
         var result = JsonConvert.DeserializeObject<DeviceConfigurationComparisonDto>(json);
         await OnSendComparisonResult.InvokeAsync(result);
     }
@@ -150,6 +149,6 @@
         if(eventArgs.Value as string == FilterType.None.ToString())
             _filterValue = string.Empty;
         
-        _selectedFilterType = eventArgs.Value as string ?? string.Empty;
+        _selectedFilterType = eventArgs.Value as string ?? Enum.GetNames(typeof(FilterType)).First();
     }
 }
