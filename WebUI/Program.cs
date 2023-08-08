@@ -1,9 +1,18 @@
+using MudBlazor.Services;
+using NLog.Web;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-AddHttpClientIgnoringSsl(builder.Services, builder.Configuration);
+builder.Services.AddMudServices();
+
+builder.Logging.ClearProviders(); 
+builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+builder.Host.UseNLog();
+
+AddComparisonHttpClient(builder.Services, builder.Configuration);
 
 var app = builder.Build();
 
@@ -26,7 +35,8 @@ app.MapFallbackToPage("/_Host");
 
 app.Run();
 
-static void AddHttpClientIgnoringSsl(IServiceCollection services, IConfiguration configuration)
+
+static void AddComparisonHttpClient(IServiceCollection services, IConfiguration configuration)
 {
     var ignoreSslErrors = configuration.GetValue<bool>("ComparisonHttpClient:IgnoreSslErrors");
     var baseAddress = configuration["ComparisonHttpClient:BaseAddress"];
