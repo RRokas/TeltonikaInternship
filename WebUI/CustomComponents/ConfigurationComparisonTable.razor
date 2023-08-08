@@ -1,45 +1,93 @@
 ﻿@using Core.DTOs
 @using Core.Enums
+@using MudBlazor
 
 @namespace WebUI.CustomComponents
 
-<table class="table">
-    <thead>
-    <tr>
-        <th scope="col">ID</th>
-        <th scope="col">Source</th>
-        <th scope="col">Target</th>
-        <th scope="col">Result</th>
-    </tr>
-    </thead>
-    <tbody>
-    @if (DeviceConfigurationComparison is not null)
-    {
-        @foreach (var comparison in DeviceConfigurationComparison.Results)
-        {
-            <tr class="@GetRowClass(comparison.ComparisonResult)">
-                <td>@comparison.Id</td>
-                <td>@comparison.SourceValue</td>
-                <td>@comparison.TargetValue</td>
-                <td>@comparison.ComparisonResult</td>
-            </tr>
-        }
-    }
-    </tbody>
-</table>
 
-@code {    
+<MudTable Items="@DeviceConfigurationComparison?.Results" Dense="false" Bordered="true" Filter="new Func<ConfigurationParameterComparisonDto, bool>(FilterFunc)">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Comparison</MudText>
+        <MudSpacer/>
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudSpacer/>
+        <MudSwitch @bind-Checked="@_searchInId" Color="Color.Primary">Search ID</MudSwitch>
+        <MudSwitch @bind-Checked="@_searchInValues" Color="Color.Primary">Search values</MudSwitch>
+        <MudSwitch @bind-Checked="@_searchInComparisonResult" Color="Color.Primary">Search result</MudSwitch>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<ConfigurationParameterComparisonDto, object>(x => int.Parse(x.Id!))">
+                ID
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<ConfigurationParameterComparisonDto, object>(x => x.SourceValue!)">
+                Source value
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<ConfigurationParameterComparisonDto, object>(x => x.TargetValue!)">
+                Target value
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<ConfigurationParameterComparisonDto, object>(x => x.ComparisonResult.ToString())">
+                Comparison result
+            </MudTableSortLabel>
+        </MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd Style="@GetRowColorStyle(context)" DataLabel="ID">@context.Id</MudTd>
+        <MudTd Style="@GetRowColorStyle(context)" DataLabel="Source value">@context.SourceValue</MudTd>
+        <MudTd Style="@GetRowColorStyle(context)" DataLabel="Target value">@context.TargetValue</MudTd>
+        <MudTd Style="@GetRowColorStyle(context)" DataLabel="Comparison result">@context.ComparisonResult</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager/>
+    </PagerContent>
+</MudTable>
+
+@code {
+
     [Parameter]
     public DeviceConfigurationComparisonDto? DeviceConfigurationComparison { get; set; }
 
-    private string GetRowClass(ComparisonResult comparisonResult)
+    private string _searchString = "";
+    private bool _searchInId = true;
+    private bool _searchInValues = true;
+    private bool _searchInComparisonResult = true;
+
+
+    private bool FilterFunc(ConfigurationParameterComparisonDto element)
     {
-        return comparisonResult switch
-        {
-            ComparisonResult.Added => "table-success",
-            ComparisonResult.Modified => "table-warning",
-            ComparisonResult.Removed => "table-danger",
-            _ => ""
-        };
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (_searchInId && element.Id?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+            return true;
+
+        if (_searchInValues && element.SourceValue?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+            return true;
+
+        if (_searchInValues && element.TargetValue?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+            return true;
+
+        if (_searchInComparisonResult && element.ComparisonResult.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
+            return true;
+
+        return false;
     }
+
+    private string GetRowColorStyle(ConfigurationParameterComparisonDto comparisonItem)
+    {
+        return comparisonItem.ComparisonResult switch
+        {
+            ComparisonResult.Added => "background-color: lightgreen;",
+            ComparisonResult.Modified => "background-color: lightyellow;",
+            ComparisonResult.Removed => "background-color: lightcoral;",
+            _ => ""
+            };
+    }
+
 }
