@@ -57,6 +57,8 @@
 </form>
 
 @inject IHttpClientFactory ClientFactory
+@inject ILogger<ComparisonRequestForm> Logger
+@inject ISnackbar Snackbar
 @code {
     private string _selectedFilterType = FilterType.None.ToString();
     private string _filterValue = string.Empty;
@@ -64,41 +66,60 @@
     private IBrowserFile? _sourceFile;
     private IBrowserFile? _targetFile;
     private string _errorMessage = string.Empty;
+    private bool _waitingForResponse = false;
 
     [Parameter]
     public EventCallback<DeviceConfigurationComparisonDto> OnSendComparisonResult { get; set; }
 
     private async Task SendComparisonRequest()
     {
-        // _ = _sourceFile ?? throw new ArgumentNullException(nameof(_sourceFile));
-        // _ = _targetFile ?? throw new ArgumentNullException(nameof(_targetFile));
         _errorMessage = string.Empty;
         if (_sourceFile == null || _targetFile == null)
         {
             _errorMessage = "Source and target files must be selected";
             return;
         }
-        
+        if(_selectedFilterType == FilterType.ParameterIdStartsWith.ToString() && string.IsNullOrWhiteSpace(_filterValue))
+        {
+            _errorMessage = "Filter value must be provided when filter type is ParameterIdStartsWith";
+            return;
+        }
 
-        var formContent = new MultipartFormDataContent();
-
-        var sourceConfig = CreateStreamContent(_sourceFile);
-        var targetConfig = CreateStreamContent(_targetFile);
-
-        formContent.Add(sourceConfig, "SourceFile", _sourceFile.Name);
-        formContent.Add(targetConfig, "TargetFile", _targetFile.Name);
-        formContent.Add(new StringContent(_selectedFilterType), "Filter.FilterType");
-        formContent.Add(new StringContent(_filterValue), "Filter.FilterValue");
+        var formContent = CreateMultipartFormDataContent();
 
         var client = ClientFactory.CreateClient("ComparisonClient");
         var response = await client.PostAsync("/ConfigCompare", formContent);
         var json = await response.Content.ReadAsStringAsync();
-        Console.WriteLine(json);
-        var result = JsonConvert.DeserializeObject<DeviceConfigurationComparisonDto>(json);
-        await OnSendComparisonResult.InvokeAsync(result);
+        try
+        {
+            var result = JsonConvert.DeserializeObject<DeviceConfigurationComparisonDto>(json);
+            await OnSendComparisonResult.InvokeAsync(result);
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "Error while deserializing comparison result, API response: {json}", json);
+            _errorMessage = $"API error occured. {json}";
+            Snackbar.Add("Comparison failed", Severity.Error);
+        }
+        Snackbar.Add("Comparison successful", Severity.Success);
+    }
+    
+    private MultipartFormDataContent CreateMultipartFormDataContent()
+    {
+        var formContent = new MultipartFormDataContent();
+
+        var sourceConfig = CreateStreamContent(_sourceFile!);
+        var targetConfig = CreateStreamContent(_targetFile!);
+
+        formContent.Add(sourceConfig, "SourceFile", _sourceFile!.Name);
+        formContent.Add(targetConfig, "TargetFile", _targetFile!.Name);
+        formContent.Add(new StringContent(_selectedFilterType), "Filter.FilterType");
+        formContent.Add(new StringContent(_filterValue), "Filter.FilterValue");
+
+        return formContent;
     }
 
-    private StreamContent CreateStreamContent(IBrowserFile? file)
+    private StreamContent CreateStreamContent(IBrowserFile file)
     {
         var stream = file.OpenReadStream();
         var content = new StreamContent(stream);

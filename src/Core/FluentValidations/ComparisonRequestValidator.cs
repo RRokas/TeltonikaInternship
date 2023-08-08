@@ -55,7 +55,7 @@ namespace Core.FluentValidations
          private static bool IsComparisonResultFilterWithValidEnum(ComparisonFilterDto filter)
          {
              return filter.FilterType == FilterType.ComparisonResult &&
-                    Enum.IsDefined(typeof(ComparisonResult), filter.FilterValue);
+                    Enum.IsDefined(typeof(ComparisonResult), filter.FilterValue!);
          }
          
          private static bool IsNotComparisonResultFilter(ComparisonFilterDto filter)
