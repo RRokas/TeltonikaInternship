@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Core.Entities;
 using Core.DTOs;
 using AutoMapper;
@@ -66,13 +67,18 @@ namespace API.Controllers
             }
             catch (ArgumentNullException e)
             {
-                _logger.LogError(e, $"Invalid argument supplied in {e.ParamName}");
+                _logger.LogError(e, "One or more input parameters are invalid.");
                 return BadRequest("One or more input parameters are invalid.");
             }
             catch (InvalidOperationException e)
             {
-                _logger.LogError(e, $"There's an issue with the comparison");
+                _logger.LogError(e, "An error occured during comparison operation.");
                 return BadRequest("An error occured during comparison operation.");
+            }
+            catch (InvalidDataException e)
+            {
+                _logger.LogError(e, "Invalid data. {errorMessage}", e.Message);
+                return BadRequest($"Invalid data. {e.Message}");
             }
             catch (Exception e)
             {

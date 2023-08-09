@@ -4,6 +4,6 @@ namespace Core.FluentValidations.Configuration
     {
         public long MaxSize { get; init; }
 
-        public string[] AllowedExtensions { get; init; }
+        public string[] AllowedExtensions { get; init; } = new[] { ".cfg" };
     }
 }

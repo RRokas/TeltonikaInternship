@@ -1,0 +1,35 @@
+﻿@page "/config-comparison"
+@using Core.DTOs
+@using WebUI.CustomComponents
+
+<div class="row">
+    <div class="col-md-6">
+        <ComparisonRequestForm OnSendComparisonResult="HandleComparisonResult"/>
+    </div>
+    @if (_comparisonResult is not null)
+    {
+        <div class="col-md-3">
+            <strong>Source configuration</strong>
+            <ConfigurationMetadataCard DeviceConfiguration="_comparisonResult.Source"/>
+        </div>
+        <div class="col-md-3">
+            <strong>Target configuration</strong>
+            <ConfigurationMetadataCard DeviceConfiguration="_comparisonResult.Target"/>
+        </div>
+    }
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <ConfigurationComparisonTable DeviceConfigurationComparison="_comparisonResult"/>
+    </div>
+</div>
+
+@code {
+    private DeviceConfigurationComparisonDto? _comparisonResult;
+
+    private void HandleComparisonResult(DeviceConfigurationComparisonDto comparisonResult)
+    {
+        _comparisonResult = comparisonResult;
+    }
+}

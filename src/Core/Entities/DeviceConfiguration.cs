@@ -30,7 +30,7 @@ namespace Core.Entities
             }
             catch (Exception e)
             {
-                throw new InvalidDataException("Invalid configuration file format.", e);
+                throw new InvalidDataException($"Invalid configuration file format for filename: {filename ?? ""}", e);
             }
         }
 
